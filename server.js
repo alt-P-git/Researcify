@@ -42,6 +42,14 @@ var con = mysql.createConnection({
   database: "loginsystem",
 });
 
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.user) {
+    return next();
+  } else {
+    return res.status(401).send('Unauthorized');
+  }
+}
+
 con.connect(function (err) {
   if (err) {
     console.log(err);
@@ -148,7 +156,7 @@ app.get("/logout", function (req, res) {
   });
 });
 
-app.post("/researchPaperList", function (req, res) {
+app.post("/researchPaperList", isAuthenticated, function (req, res) {
   var search = req.body.search;
   var mode = req.body.mode;
   var sortBy = req.body.sortBy;
@@ -243,7 +251,7 @@ const upload = multer({
   fileFilter,
 });
 
-app.post("/uploadresearch", upload.single("file"), (req, res) => {
+app.post("/uploadresearch", isAuthenticated, upload.single("file"), (req, res) => {
   /* console.log(req.body.name);
   console.log(req.body.subject);
   console.log(req.file); */
@@ -265,7 +273,7 @@ app.post("/uploadresearch", upload.single("file"), (req, res) => {
   );
 });
 
-app.get("/viewResearchPaper/:paperId", async (req, res) => {
+app.get("/viewResearchPaper/:paperId", isAuthenticated, async (req, res) => {
   try {
     const paperId = req.params.paperId;
     const filenamesql =
@@ -358,6 +366,23 @@ app.delete("/deleteResearchPaper/:paperid", (req, res) => {
   });
 });
 
+app.get("/userprofile/:userid", isAuthenticated, (req, res) => {
+  var userid = req.params.userid;
+  var sql = "SELECT firstname, lastname, email FROM users WHERE id = ?";
+  con.query(sql, [userid], function (err, result) {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Database error" });
+      return;
+    }
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(201).send("User not found");
+    }
+  });
+});
+
 app.listen(4000, () => {
   console.log("Server running on port 4000");
-});
+});  
