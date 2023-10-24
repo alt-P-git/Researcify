@@ -296,11 +296,10 @@ app.get("/viewResearchPaper/:paperId", async (req, res) => {
             }
           });
         } else {
-          console.error(`File not found: ${filePath}`);
+          //console.error(`File not found: ${filePath}`);
           res.status(404).send("File not found");
         }
       } else {
-        // nothing found
         return res.status(404).send("File not found");
       }
     });
@@ -313,14 +312,48 @@ app.get("/viewResearchPaper/:paperId", async (req, res) => {
 app.delete("/deleteResearchPaper/:paperid", (req, res) => {
   var paperid = req.params.paperid;
   var userid = req.session.user.id;
-  var del = "DELETE FROM researchpaper_data WHERE id = ? AND userid = ?";
-  con.query(del, [paperid, userid], function (err, result) {
+  const filenamesql = "SELECT file_name FROM `researchpaper_data` WHERE id = ? AND userid = ?";
+
+  con.query(filenamesql, [paperid, userid], function (err, result) {
     if (err) {
       console.log(err);
-      res.status(201).json({ error: "Deletion unsuccessful" });
+      res.status(500).json({ error: "Database error" });
       return;
+    }
+
+    if (result.length > 0) {
+      const fileName = result[0].file_name;
+
+      if (fileName === null) {
+        return res.status(404).send("File not present on server");
+      }
+
+      const filePath = path.join(__dirname, "files/researchpapers", fileName);
+
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+          var del = "DELETE FROM researchpaper_data WHERE id = ? AND userid = ?";
+          con.query(del, [paperid, userid], function (err, result) {
+            if (err) {
+              console.log(err);
+              res.status(201).json({ error: "Deletion unsuccessful" });
+              return;
+            } else {
+              res.status(200).send("Deletion successful");
+            }
+          });
+        } catch (err) {
+          console.error("An error occurred:", err);
+          res.status(500).send("Internal Server Error");
+        }
+      } else {
+        //console.error(`File not found: ${filePath}`);
+        res.status(404).send("File not present on server");
+      }
+      
     } else {
-      res.status(200).send("Deletion successful");
+      return res.status(404).send("Unathorized access");
     }
   });
 });
