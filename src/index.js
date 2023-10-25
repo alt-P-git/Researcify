@@ -6,6 +6,7 @@ import Login from './login';
 import Register from './register';
 import ResearchPapers from "./researchpapers";
 import UploadResearch from "./uploadresearch";
+import ReviewPaperlist from "./reviewpaperlist";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -18,6 +19,7 @@ root.render(
         <Route path='/register' element={<Register />} />
         <Route path='/researchpapers' element={<ResearchPapers />} />
         <Route path='/uploadresearch' element={<UploadResearch />} />
+        <Route path='/reviewpaperlist' element={<ReviewPaperlist />} />
       </Routes>
     </Router>
   </React.StrictMode>

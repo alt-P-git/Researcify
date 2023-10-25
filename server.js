@@ -43,10 +43,34 @@ var con = mysql.createConnection({
 });
 
 function isAuthenticated(req, res, next) {
+  if (req.session) {
+    return next();
+  } else {
+    return res.status(401).send("Unauthorized");
+  }
+}
+
+function isAuthenticatedUser(req, res, next) {
   if (req.session && req.session.user) {
     return next();
   } else {
-    return res.status(401).send('Unauthorized');
+    return res.status(401).send("Unauthorized");
+  }
+}
+
+function isAuthenticatedPeer(req, res, next) {
+  if (req.session && req.session.peer) {
+    return next();
+  } else {
+    return res.status(401).send("Unauthorized");
+  }
+}
+
+function isAuthenticatedAdmin(req, res, next) {
+  if (req.session && req.session.admin) {
+    return next();
+  } else {
+    return res.status(401).send("Unauthorized");
   }
 }
 
@@ -112,35 +136,36 @@ con.connect(function (err) {
   app.post("/login", (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
-
-    // Use a parameterized query to prevent SQL injection
-    con.query(
-      "SELECT * FROM users WHERE BINARY email = ? AND password = ?",
-      [email, password],
-      function (err, result) {
-        if (err) {
-          console.log(err);
-          res.status(500).json({ error: "Failed to execute query" });
-          return;
-        }
-
-        if (result.length > 0) {
-          // User exists
-          req.session.user = {
-            id: result[0].id,
-            firstname: result[0].firstname,
-            lastname: result[0].lastname,
-            email: email,
-            password: password,
-          };
-
-          res.status(200).send("Login successful");
-        } else {
-          // User does not exist
-          res.status(401).json({ error: "Invalid email or password" });
-        }
+    var role = req.body.role;
+    if (role === "user") {
+      var sql = "SELECT * FROM users WHERE BINARY email = ? AND password = ?";
+    } else if (role === "admin") {
+      var sql = "SELECT * FROM admin WHERE BINARY email = ? AND password = ?";
+    } else if (role === "peer") {
+      var sql = "SELECT * FROM peer WHERE BINARY email = ? AND password = ?";
+    } else {
+      return res.status(401).send("Invalid role");
+    }
+    con.query(sql, [email, password], function (err, result) {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Failed to execute query" });
+        return;
       }
-    );
+      if (result.length > 0) {
+        req.session[role] = {
+          id: result[0].id,
+          firstname: result[0].firstname,
+          lastname: result[0].lastname,
+          email: email,
+          password: password,
+        };
+        res.status(200).send("Login successful");
+      } else {
+        // User does not exist
+        res.status(401).json({ error: "Invalid email or password" });
+      }
+    });
   });
 });
 
@@ -151,24 +176,26 @@ app.get("/logout", function (req, res) {
       res.status(500).send({ error: "Failed to destroy session" });
     } else {
       res.status(200).send({ message: "Session destroyed successfully" });
-      /* console.log("Session destroyed"); */
     }
   });
 });
 
-app.post("/researchPaperList", isAuthenticated, function (req, res) {
+app.post("/researchPaperList", isAuthenticatedUser, function (req, res) {
   var search = req.body.search;
   var mode = req.body.mode;
   var sortBy = req.body.sortBy;
   const id = req.session.user.id;
-  //console.log(id);
+  const subject = req.body.subject;
 
   if (mode === "myResearchPaper") {
     if (search === "") {
-      var sql = `SELECT * FROM researchpaper_data WHERE userid = ${id}`;
+      var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE userid = ${id}`;
     } else {
-      var sql = `SELECT * FROM researchpaper_data WHERE userid = ${id} AND title LIKE '%${search}%'`;
+      var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE userid = ${id} AND title LIKE '%${search}%'`;
     }
+    if (subject !== "ALL" && subject !== "") {
+      sql = sql + ` AND subject = '${subject}'`;
+    };
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -179,16 +206,18 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
       if (result.length > 0) {
         res.status(200).json(result);
       } else {
-        // nothing found
         res.status(201).send("Files not found");
       }
     });
   } else if (mode === "researchPaper") {
     if (search === "") {
-      var sql = `SELECT * FROM researchpaper_data`;
+      var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE peer_review = "accepted"`;
     } else {
-      var sql = `SELECT * FROM researchpaper_data WHERE title LIKE '%${search}%'`;
+      var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE title LIKE '%${search}%' AND peer_review = "accepted"`;
     }
+    if (subject !== "ALL" && subject !== "") {
+      sql = sql + ` AND subject = '${subject}'`;
+    };
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -205,9 +234,9 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
     });
   } else if (mode === "journal") {
     if (search === "") {
-      var sql = `SELECT * FROM journal_data`;
+      var sql = `SELECT journal_id, journal_name, journal_title, pub_date FROM journal_data`;
     } else {
-      var sql = `SELECT * FROM journal_data WHERE journal_title LIKE '%${search}%'`;
+      var sql = `SELECT journal_id, journal_name, journal_title, pub_date FROM journal_data WHERE journal_title LIKE '%${search}%'`;
     }
     con.query(sql, function (err, result) {
       if (err) {
@@ -228,6 +257,50 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
   }
 });
 
+app.post("/reviewPaperList", isAuthenticatedPeer, function (req, res) {
+  var search = req.body.search;
+  var subject = req.body.subject;
+  if (search === "") {
+    var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE peer_review = "pending"`;
+  } else {
+    var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE title LIKE '%${search}%' AND peer_review = "pending"`;
+  }
+  if (subject !== "ALL" && subject !== "") {
+    sql = sql + ` AND subject = '${subject}'`;
+  };
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Failed to execute query" });
+      return;
+    }
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(201).send("Files not found");
+    }
+  });
+});
+
+app.post("/reviewResearchPaper/:paperId", isAuthenticatedPeer, function (req, res) {
+  var paperId = req.params.paperId;
+  var decision = req.body.decision;
+  var sql = `UPDATE researchpaper_data SET peer_review = ? WHERE id = ?`;
+
+  con.query(sql, [decision, paperId], function (err, result) {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Failed to execute query" });
+      return;
+    }
+    if (result.affectedRows > 0) {
+      res.status(200).send("Review submitted successfully");
+    } else {
+      res.status(404).send("Paper not found");
+    }
+  });
+});
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./files/researchpapers");
@@ -238,7 +311,6 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  // Accept only PDF files
   if (file.mimetype === "application/pdf") {
     cb(null, true);
   } else {
@@ -251,27 +323,38 @@ const upload = multer({
   fileFilter,
 });
 
-app.post("/uploadresearch", isAuthenticated, upload.single("file"), (req, res) => {
-  /* console.log(req.body.name);
-  console.log(req.body.subject);
-  console.log(req.file); */
+app.post("/uploadresearch", isAuthenticatedUser, upload.single("file"), (req, res) => {
+  //function to simply remove file with filename from the server
+  
 
-  var uploadsql =
-    "INSERT INTO `researchpaper_data` ( `userid`, `title`, `subject`, `file_name`) VALUES (?, ?, ?, ?);";
-  con.query(
-    uploadsql,
-    [req.session.user.id, req.body.title, req.body.subject, req.file.filename],
-    function (err, result) {
-      if (err) {
-        console.log(err);
-        res.status(201).json({ error: "File upload unsuccessful" });
-        return;
-      } else {
-        res.status(200).send("File upload successful");
+  if(req.body.title === "" || req.body.subject === "") {
+    return res.status(400).send("Title or subject is empty");
+  };
+  if(req.file === undefined) {
+    return res.status(400).send("File is empty");
+  };
+    var uploadsql =
+      "INSERT INTO `researchpaper_data` ( `userid`, `title`, `subject`, `file_name`) VALUES (?, ?, ?, ?);";
+    con.query(
+      uploadsql,
+      [
+        req.session.user.id,
+        req.body.title,
+        req.body.subject,
+        req.file.filename,
+      ],
+      function (err, result) {
+        if (err) {
+          console.log(err);
+          res.status(201).json({ error: "File upload unsuccessful" });
+          return;
+        } else {
+          res.status(200).send("File upload successful");
+        }
       }
-    }
-  );
-});
+    );
+  }
+);
 
 app.get("/viewResearchPaper/:paperId", isAuthenticated, async (req, res) => {
   try {
@@ -319,8 +402,27 @@ app.get("/viewResearchPaper/:paperId", isAuthenticated, async (req, res) => {
 
 app.delete("/deleteResearchPaper/:paperid", (req, res) => {
   var paperid = req.params.paperid;
-  var userid = req.session.user.id;
-  const filenamesql = "SELECT file_name FROM `researchpaper_data` WHERE id = ? AND userid = ?";
+  var userid = "";
+  if (req.session.admin) {
+    con.query(
+      "SELECT userid FROM researchpaper_data WHERE id = ?",
+      [paperid],
+      function (err, result) {
+        if (err) {
+          res.status(500).json({ error: "Database error" });
+          return;
+        } else if (result.length > 0) {
+          userid = result[0].userid;
+        } else {
+          return res.status(404).send("File not found");
+        }
+      }
+    );
+  } else if (req.session.user) {
+    userid = req.session.user.id;
+  }
+  const filenamesql =
+    "SELECT file_name FROM `researchpaper_data` WHERE id = ? AND userid = ?";
 
   con.query(filenamesql, [paperid, userid], function (err, result) {
     if (err) {
@@ -341,7 +443,8 @@ app.delete("/deleteResearchPaper/:paperid", (req, res) => {
       if (fs.existsSync(filePath)) {
         try {
           fs.unlinkSync(filePath);
-          var del = "DELETE FROM researchpaper_data WHERE id = ? AND userid = ?";
+          var del =
+            "DELETE FROM researchpaper_data WHERE id = ? AND userid = ?";
           con.query(del, [paperid, userid], function (err, result) {
             if (err) {
               console.log(err);
@@ -359,14 +462,13 @@ app.delete("/deleteResearchPaper/:paperid", (req, res) => {
         //console.error(`File not found: ${filePath}`);
         res.status(404).send("File not present on server");
       }
-      
     } else {
       return res.status(404).send("Unathorized access");
     }
   });
 });
 
-app.get("/userprofile/:userid", isAuthenticated, (req, res) => {
+app.get("/userprofile/:userid", isAuthenticatedUser, (req, res) => {
   var userid = req.params.userid;
   var sql = "SELECT firstname, lastname, email FROM users WHERE id = ?";
   con.query(sql, [userid], function (err, result) {
@@ -385,4 +487,4 @@ app.get("/userprofile/:userid", isAuthenticated, (req, res) => {
 
 app.listen(4000, () => {
   console.log("Server running on port 4000");
-});  
+});

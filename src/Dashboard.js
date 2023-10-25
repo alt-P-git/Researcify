@@ -50,7 +50,6 @@ function Dashboard() {
   return (
     <div className="dashboard">
       Hello! {data.firstname} {data.lastname}
-      {/* <Link to="/researchpapers">My research papers</Link> */}
       <ResearchPapers />
       <UploadResearch />
       <button onClick={handleLogout}>Logout</button>

@@ -5,9 +5,11 @@ import axios from "axios";
 function ResearchPapers() {
   const [search, setSearch] = useState("");
   const [mode, setMode] = useState("myResearchPaper");
-  const [sortby, setSortby] = useState("");
+  const [sortBy, setSortBy] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [researchPaperList, setResearchPaperList] = useState([]);
+  const [subject, setSubject] = useState("ALL");
+  const [sortOrder, setSortOrder] = useState("asc");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +18,8 @@ function ResearchPapers() {
         const response = await axios.post("/researchPaperList", {
           search: search,
           mode: mode,
-          sortby: sortby,
+          /* sortBy: sortBy, */
+          subject: subject,
         });
         if (response.status === 201) {
           setErrorMessage("Nothing found");
@@ -30,7 +33,15 @@ function ResearchPapers() {
       }
     };
     fetchData();
-  }, [search, mode, sortby]);
+  }, [search, mode/* , sortBy */, subject]);
+
+  const sortedResearchPaperList = [...researchPaperList].sort((a, b) => {
+    if (sortOrder === "asc") {
+      return a[sortBy] > b[sortBy] ? 1 : -1;
+    } else {
+      return a[sortBy] < b[sortBy] ? 1 : -1;
+    }
+  });
 
   const handleSearch = (event) => {
     if (event.key === "Enter") {
@@ -46,7 +57,6 @@ function ResearchPapers() {
     try {
       const response = await axios.delete(`/deleteResearchPaper/${paperid}`);
       if (response.status === 200) {
-        // Refresh the research papers
         const updatedPapers = researchPaperList.filter(
           (paper) => paper.id !== paperid
         );
@@ -61,6 +71,7 @@ function ResearchPapers() {
     try {
       const response = await axios.get(`/viewResearchPaper/${paperId}`, { responseType: 'blob' });
       if (response.status === 200) {
+        setErrorMessage("")
         const fileURL = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
         const fileLink = document.createElement("a");
         fileLink.href = fileURL;
@@ -84,10 +95,24 @@ function ResearchPapers() {
   return (
     <div className="researchPapers">
       <select value={mode} onChange={handleModeChange}>
-        {/* <h2>{errorMessage}</h2> */}
         <option value="myResearchPaper">My Research Papers</option>
         <option value="researchPaper">Research Papers</option>
         <option value="journal">Journals</option>
+      </select>
+      <select value={subject} onChange={(e) => setSubject(e.target.value)}>
+        <option value="ALL">ALL</option>
+        <option value="CSE">CSE</option>
+        <option value="ECE">ECE</option>
+        <option value="ME">ME</option>
+      </select>
+      <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+      <option value="">Sort by</option>
+        <option value="title">Title</option>
+        <option value="pub_date">Date_Time</option>
+      </select>
+      <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
       </select>
       <input type="text" onKeyDown={handleSearch} placeholder="Search..." />
       {mode === "journal" ? (
@@ -105,7 +130,7 @@ function ResearchPapers() {
         <div>
           <h1>Research Papers</h1>
           <h2>{errorMessage}</h2>
-          {researchPaperList.map((paper) => (
+          {sortedResearchPaperList.map((paper) => (
             <div key={paper.id}>
               <h2>Id: {paper.id}</h2>
               <p>Title: {paper.title}</p>

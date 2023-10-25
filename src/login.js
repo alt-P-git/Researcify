@@ -5,6 +5,7 @@ import axios from 'axios';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('user'); // Add this line
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
@@ -13,9 +14,16 @@ function Login() {
     try {
       const response = await axios.post('/login', {
         email: email,
-        password: password
+        password: password,
+        role: role
       });
-      navigate('/dashboard');
+      setErrorMessage('');
+      if (role === 'peer') {
+        navigate('/reviewpaperlist');
+      }
+      else{
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error('An error occurred:', error);
       if (error.response && error.response.status === 401) {
@@ -29,6 +37,14 @@ function Login() {
       <h3>Login form</h3>
       {errorMessage && <p>{errorMessage}</p>}
       <form onSubmit={handleSubmit}>
+        <div className="form-group mb-3">
+            <label>Role</label>
+            <select className="form-control" value={role} onChange={(e) => setRole(e.target.value)}>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="peer">Peer</option>
+            </select>
+        </div>
         <div className="form-group mb-3">
             <label>Email</label>
             <input type="email" className="form-control" placeholder="Email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />

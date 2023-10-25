@@ -16,11 +16,7 @@ const UploadResearch = () => {
 
     axios.post('/uploadresearch', formData)
       .then(res => {
-        //console.log(res);
         setError("File uploaded");
-        /* setTitle("");
-        setFile(null);
-        setSubject(""); */
       })
       .catch(err => {
         console.error(err);
@@ -33,10 +29,9 @@ const UploadResearch = () => {
       <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
       <select value={subject} onChange={(e) => setSubject(e.target.value)}>
         <option value="">Select a subject</option>
-        <option value="cse">CSE</option>
-        <option value="ece">ECE</option>
-        <option value="me">ME</option>
-
+        <option value="CSE">CSE</option>
+        <option value="ECE">ECE</option>
+        <option value="ME">ME</option>
       </select>
       <input type="file" onChange={(e) => setFile(e.target.files[0])} />
       <button type="submit">Upload</button>
