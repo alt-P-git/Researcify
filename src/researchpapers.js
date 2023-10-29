@@ -7,10 +7,17 @@ function ResearchPapers() {
   const [mode, setMode] = useState("myResearchPaper");
   const [sortBy, setSortBy] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [researchPaperList, setResearchPaperList] = useState([]);
+  const [rawList, setRawList] = useState([]);
   const [subject, setSubject] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("asc");
   const navigate = useNavigate();
+
+  const displayErrorMessage = (message) => {
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 2000);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,24 +25,22 @@ function ResearchPapers() {
         const response = await axios.post("/researchPaperList", {
           search: search,
           mode: mode,
-          /* sortBy: sortBy, */
           subject: subject,
         });
         if (response.status === 201) {
-          setErrorMessage("Nothing found");
-          setResearchPaperList([]);
+          displayErrorMessage("Nothing found");
+          setRawList([]);
         } else {
-          setErrorMessage("");
-          setResearchPaperList(response.data);
+          setRawList(response.data);
         }
       } catch (error) {
         console.error("An error occurred:", error);
       }
     };
     fetchData();
-  }, [search, mode/* , sortBy */, subject]);
+  }, [search, mode, subject]);
 
-  const sortedResearchPaperList = [...researchPaperList].sort((a, b) => {
+  const sortedList = [...rawList].sort((a, b) => {
     if (sortOrder === "asc") {
       return a[sortBy] > b[sortBy] ? 1 : -1;
     } else {
@@ -53,26 +58,29 @@ function ResearchPapers() {
     setMode(event.target.value);
   };
 
-  const deleteResearchPaper = async (paperid) => {
+  const deleteFile = async (paperid) => {
     try {
-      const response = await axios.delete(`/deleteResearchPaper/${paperid}`);
+      const response = await axios.delete(`/deleteFile/${paperid}`);
       if (response.status === 200) {
-        const updatedPapers = researchPaperList.filter(
-          (paper) => paper.id !== paperid
-        );
-        setResearchPaperList(updatedPapers);
+        const updatedPapers = rawList.filter((paper) => paper.id !== paperid);
+        setRawList(updatedPapers);
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
   };
 
-  const viewResearchPaper = async (paperId) => {
+  const view = async (paperId, type) => {
+    setErrorMessage("Loading...");
     try {
-      const response = await axios.get(`/viewResearchPaper/${paperId}`, { responseType: 'blob' });
+      const response = await axios.get(`/view/${type}/${paperId}`, {
+        responseType: "blob",
+      });
       if (response.status === 200) {
-        setErrorMessage("")
-        const fileURL = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+        setErrorMessage("");
+        const fileURL = window.URL.createObjectURL(
+          new Blob([response.data], { type: response.headers["content-type"] })
+        );
         const fileLink = document.createElement("a");
         fileLink.href = fileURL;
         fileLink.setAttribute("target", "_blank");
@@ -80,17 +88,14 @@ function ResearchPapers() {
       }
     } catch (error) {
       if (error.response.status === 404) {
-        setErrorMessage("File not found");
-      }
-      else if (error.response.status === 500) {
-        setErrorMessage("Server error")
-      }
-      else {
+        displayErrorMessage("File not found on server");
+      } else if (error.response.status === 500) {
+        displayErrorMessage("Server error");
+      } else {
         console.error("An error occurred:", error);
       }
     }
-  };  
-  
+  };
 
   return (
     <div className="researchPapers">
@@ -106,7 +111,7 @@ function ResearchPapers() {
         <option value="ME">ME</option>
       </select>
       <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-      <option value="">Sort by</option>
+        <option value="">Sort by</option>
         <option value="title">Title</option>
         <option value="pub_date">Date_Time</option>
       </select>
@@ -118,31 +123,44 @@ function ResearchPapers() {
       {mode === "journal" ? (
         <div>
           <h1>Journals</h1>
-          <h2>{errorMessage}</h2>
-          {researchPaperList.map((journal) => (
-            <div key={journal.journal_id}>
-              <h2>{journal.journal_name}</h2>
-              <p>{journal.journal_title}</p>
-            </div>
-          ))}
+          <p>{errorMessage}</p>
+          {sortedList.map((journal) => {
+            let date = new Date(journal.pub_date);
+            let dateString = date.toISOString().split("T")[0];
+            return (
+              <div key={journal.journal_id}>
+                <h2>{journal.journal_name}</h2>
+                <p>{journal.journal_title}</p>
+                <p>Published on: {dateString}</p>
+                <button onClick={() => view(journal.journal_id, "journal")}>
+                  View
+                </button>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div>
           <h1>Research Papers</h1>
-          <h2>{errorMessage}</h2>
-          {sortedResearchPaperList.map((paper) => (
-            <div key={paper.id}>
-              <h2>Id: {paper.id}</h2>
-              <p>Title: {paper.title}</p>
-              <p>Subject: {paper.subject}</p>
-              <button onClick={() => viewResearchPaper(paper.id)}>View</button>
-              {mode === "myResearchPaper" && (
-                <button onClick={() => deleteResearchPaper(paper.id)}>
-                  Delete
+          <p>{errorMessage}</p>
+          {sortedList.map((paper) => {
+            let date = new Date(paper.pub_date);
+            let dateString = date.toISOString().split("T")[0];
+            return (
+              <div key={paper.id}>
+                <h2>Id: {paper.id}</h2>
+                <p>Title: {paper.title}</p>
+                <p>Subject: {paper.subject}</p>
+                <p>Published on: {dateString}</p>
+                <button onClick={() => view(paper.id, "researchpaper")}>
+                  View
                 </button>
-              )}
-            </div>
-          ))}
+                {mode === "myResearchPaper" && (
+                  <button onClick={() => deleteFile(paper.id)}>Delete</button>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

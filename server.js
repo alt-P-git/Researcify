@@ -42,6 +42,7 @@ var con = mysql.createConnection({
   database: "loginsystem",
 });
 
+//for authorization
 function isAuthenticated(req, res, next) {
   if (req.session) {
     return next();
@@ -49,7 +50,6 @@ function isAuthenticated(req, res, next) {
     return res.status(401).send("Unauthorized");
   }
 }
-
 function isAuthenticatedUser(req, res, next) {
   if (req.session && req.session.user) {
     return next();
@@ -57,7 +57,6 @@ function isAuthenticatedUser(req, res, next) {
     return res.status(401).send("Unauthorized");
   }
 }
-
 function isAuthenticatedPeer(req, res, next) {
   if (req.session && req.session.peer) {
     return next();
@@ -65,9 +64,15 @@ function isAuthenticatedPeer(req, res, next) {
     return res.status(401).send("Unauthorized");
   }
 }
-
 function isAuthenticatedAdmin(req, res, next) {
   if (req.session && req.session.admin) {
+    return next();
+  } else {
+    return res.status(401).send("Unauthorized");
+  }
+}
+function isAuthenticatedPublisher(req, res, next) {
+  if (req.session && req.session.publisher) {
     return next();
   } else {
     return res.status(401).send("Unauthorized");
@@ -133,6 +138,15 @@ con.connect(function (err) {
     res.status(401).send("Invalid session");
   });
 
+  app.get("/publisher_dashboard", (req, res) => {
+    if (req.session.publisher) {
+      return res.json({
+        journal_name: req.session.publisher.journal_name,
+      });
+    }
+    res.status(401).send("Invalid session");
+  });
+
   app.post("/login", (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
@@ -143,6 +157,9 @@ con.connect(function (err) {
       var sql = "SELECT * FROM admin WHERE BINARY email = ? AND password = ?";
     } else if (role === "peer") {
       var sql = "SELECT * FROM peer WHERE BINARY email = ? AND password = ?";
+    } else if (role === "publisher") {
+      var sql =
+        "SELECT * FROM publisher WHERE BINARY email = ? AND password = ?";
     } else {
       return res.status(401).send("Invalid role");
     }
@@ -153,13 +170,24 @@ con.connect(function (err) {
         return;
       }
       if (result.length > 0) {
-        req.session[role] = {
-          id: result[0].id,
-          firstname: result[0].firstname,
-          lastname: result[0].lastname,
-          email: email,
-          password: password,
-        };
+        if (role != "publisher") {
+          req.session[role] = {
+            id: result[0].id,
+            firstname: result[0].firstname,
+            lastname: result[0].lastname,
+            email: email,
+            password: password,
+          };
+        }
+        else {
+          req.session[role] = {
+            id: result[0].id,
+            journal_name: result[0].journal_name,
+            email: email,
+            password: password,
+          };
+        }
+
         res.status(200).send("Login successful");
       } else {
         // User does not exist
@@ -183,7 +211,6 @@ app.get("/logout", function (req, res) {
 app.post("/researchPaperList", isAuthenticatedUser, function (req, res) {
   var search = req.body.search;
   var mode = req.body.mode;
-  var sortBy = req.body.sortBy;
   const id = req.session.user.id;
   const subject = req.body.subject;
 
@@ -195,7 +222,7 @@ app.post("/researchPaperList", isAuthenticatedUser, function (req, res) {
     }
     if (subject !== "ALL" && subject !== "") {
       sql = sql + ` AND subject = '${subject}'`;
-    };
+    }
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -217,7 +244,7 @@ app.post("/researchPaperList", isAuthenticatedUser, function (req, res) {
     }
     if (subject !== "ALL" && subject !== "") {
       sql = sql + ` AND subject = '${subject}'`;
-    };
+    }
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -234,9 +261,9 @@ app.post("/researchPaperList", isAuthenticatedUser, function (req, res) {
     });
   } else if (mode === "journal") {
     if (search === "") {
-      var sql = `SELECT journal_id, journal_name, journal_title, pub_date FROM journal_data`;
+      var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.id;`
     } else {
-      var sql = `SELECT journal_id, journal_name, journal_title, pub_date FROM journal_data WHERE journal_title LIKE '%${search}%'`;
+      var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.journal_id WHERE journal_title LIKE '%${search}%'`;
     }
     con.query(sql, function (err, result) {
       if (err) {
@@ -267,7 +294,7 @@ app.post("/reviewPaperList", isAuthenticatedPeer, function (req, res) {
   }
   if (subject !== "ALL" && subject !== "") {
     sql = sql + ` AND subject = '${subject}'`;
-  };
+  }
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
@@ -282,24 +309,25 @@ app.post("/reviewPaperList", isAuthenticatedPeer, function (req, res) {
   });
 });
 
-app.post("/reviewResearchPaper/:paperId", isAuthenticatedPeer, function (req, res) {
-  var paperId = req.params.paperId;
-  var decision = req.body.decision;
-  var sql = `UPDATE researchpaper_data SET peer_review = ? WHERE id = ?`;
+app.post("/review/:paperId", isAuthenticatedPeer, function (req, res) {
+    var paperId = req.params.paperId;
+    var decision = req.body.decision;
+    var sql = `UPDATE researchpaper_data SET peer_review = ? WHERE id = ?`;
 
-  con.query(sql, [decision, paperId], function (err, result) {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ error: "Failed to execute query" });
-      return;
-    }
-    if (result.affectedRows > 0) {
-      res.status(200).send("Review submitted successfully");
-    } else {
-      res.status(404).send("Paper not found");
-    }
-  });
-});
+    con.query(sql, [decision, paperId], function (err, result) {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Failed to execute query" });
+        return;
+      }
+      if (result.affectedRows > 0) {
+        res.status(200).send("Review submitted successfully");
+      } else {
+        res.status(404).send("Paper not found");
+      }
+    });
+  }
+);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -323,16 +351,14 @@ const upload = multer({
   fileFilter,
 });
 
-app.post("/uploadresearch", isAuthenticatedUser, upload.single("file"), (req, res) => {
-  //function to simply remove file with filename from the server
-  
-
-  if(req.body.title === "" || req.body.subject === "") {
-    return res.status(400).send("Title or subject is empty");
-  };
-  if(req.file === undefined) {
-    return res.status(400).send("File is empty");
-  };
+app.post("/uploadresearch", isAuthenticatedUser, upload.single("file"),
+  (req, res) => {
+    if (req.body.title === "" || req.body.subject === "") {
+      return res.status(400).send("Title or subject is empty");
+    }
+    if (req.file === undefined) {
+      return res.status(400).send("File is empty");
+    }
     var uploadsql =
       "INSERT INTO `researchpaper_data` ( `userid`, `title`, `subject`, `file_name`) VALUES (?, ?, ?, ?);";
     con.query(
@@ -356,11 +382,16 @@ app.post("/uploadresearch", isAuthenticatedUser, upload.single("file"), (req, re
   }
 );
 
-app.get("/viewResearchPaper/:paperId", isAuthenticated, async (req, res) => {
+app.get("/view/:type/:paperId", isAuthenticated, async (req, res) => {
   try {
     const paperId = req.params.paperId;
-    const filenamesql =
-      "SELECT file_name FROM `researchpaper_data` WHERE id = ?";
+    const type = req.params.type;
+    var filenamesql = `SELECT file_name FROM researchpaper_data WHERE id = ?`;
+    if (type == "journal") {
+      filenamesql = `SELECT file_name FROM journal_data WHERE journal_id = ?`;
+    }
+    /* const filenamesql =
+      "SELECT file_name FROM `researchpaper_data` WHERE id = ?"; */
     var fileName = "";
 
     con.query(filenamesql, [paperId], function (err, result) {
@@ -368,7 +399,7 @@ app.get("/viewResearchPaper/:paperId", isAuthenticated, async (req, res) => {
         console.log(err);
         res.status(500).json({ error: "Database error" });
         return;
-      }
+      };
 
       if (result.length > 0) {
         const fileName = result[0].file_name;
@@ -376,9 +407,10 @@ app.get("/viewResearchPaper/:paperId", isAuthenticated, async (req, res) => {
         if (fileName === null) {
           return res.status(404).send("File name is not available");
         }
-
-        const filePath = path.join(__dirname, "files/researchpapers", fileName);
-
+        var filePath = path.join(__dirname, "files/researchpapers", fileName);
+        if (type == "journal") {
+          filePath = path.join(__dirname, "files/journals", fileName);
+        };
         if (fs.existsSync(filePath)) {
           res.download(filePath, fileName, (err) => {
             if (err) {
@@ -400,29 +432,33 @@ app.get("/viewResearchPaper/:paperId", isAuthenticated, async (req, res) => {
   }
 });
 
-app.delete("/deleteResearchPaper/:paperid", (req, res) => {
-  var paperid = req.params.paperid;
+app.delete("/deleteFile/:type/:paperid", (req, res) => {
+  const paperid = req.params.paperId;
+  const type = req.params.type;
   var userid = "";
   if (req.session.admin) {
-    con.query(
-      "SELECT userid FROM researchpaper_data WHERE id = ?",
-      [paperid],
-      function (err, result) {
+    var sql = "SELECT userid FROM researchpaper_data WHERE id = ?";
+    if (type === "journal") {
+      sql = "SELECT publisher_id FROM journal_data WHERE id = ?";
+    };
+    con.query(sql, [paperid], function (err, result) {
         if (err) {
           res.status(500).json({ error: "Database error" });
           return;
         } else if (result.length > 0) {
           userid = result[0].userid;
         } else {
-          return res.status(404).send("File not found");
+          return res.status(404).send("User not found");
         }
       }
     );
   } else if (req.session.user) {
     userid = req.session.user.id;
   }
-  const filenamesql =
-    "SELECT file_name FROM `researchpaper_data` WHERE id = ? AND userid = ?";
+  var filenamesql = "SELECT file_name FROM `researchpaper_data` WHERE id = ? AND userid = ?";
+  if (type === "journal") {
+    "SELECT file_name FROM `journal_data` WHERE id = ? AND publisher_id = ?";
+  };
 
   con.query(filenamesql, [paperid, userid], function (err, result) {
     if (err) {
@@ -467,6 +503,58 @@ app.delete("/deleteResearchPaper/:paperid", (req, res) => {
     }
   });
 });
+
+const storageJournal = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./files/journals");
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}_${req.session.publisher.id}.pdf`);
+  },
+});
+
+const journalFileFilter = (req, file, cb) => {
+  if (file.mimetype === "application/pdf") {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type, only PDF is allowed!"), false);
+  }
+};
+
+const uploadJournal = multer({
+  storage: storageJournal,
+  fileFilter: journalFileFilter,
+});
+
+app.post("/uploadjournal", isAuthenticatedPublisher, uploadJournal.single("file"),
+(req, res) => {
+  console.log(req.file.filename);
+    if (req.body.title === "") {
+      return res.status(400).send("Title is empty");
+    }
+    if (req.file === undefined) {
+      return res.status(400).send("File is empty");
+    }
+    var uploadsql =
+      "INSERT INTO `journal_data` ( `publisher_id`,`journal_title`, `file_name`) VALUES (?, ?, ?);";
+    con.query(uploadsql,
+      [
+        req.session.publisher.id,
+        req.body.title,
+        req.file.filename,
+      ],
+      function (err, result) {
+        if (err) {
+          console.log(err);
+          res.status(201).json({ error: "File upload unsuccessful" });
+          return;
+        } else {
+          res.status(200).send("File upload successful");
+        }
+      }
+    );
+  }
+);
 
 app.get("/userprofile/:userid", isAuthenticatedUser, (req, res) => {
   var userid = req.params.userid;

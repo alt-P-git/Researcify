@@ -21,6 +21,9 @@ function Login() {
       if (role === 'peer') {
         navigate('/reviewpaperlist');
       }
+      else if (role === 'publisher') {
+        navigate('/publisher_dashboard');
+      }
       else{
         navigate('/dashboard');
       }
@@ -43,6 +46,7 @@ function Login() {
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
                 <option value="peer">Peer</option>
+                <option value="publisher">Publisher</option>
             </select>
         </div>
         <div className="form-group mb-3">
