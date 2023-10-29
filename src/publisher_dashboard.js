@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-/* import ResearchPapers from './researchpapers';
-import UploadResearch from './uploadresearch'; */
 import UploadJournal from './uploadjournal';
+import Publisher_Journals from './publisher_journals';
 
 function PublisherDashboard() {
   const [data, setData] = useState({});
@@ -16,7 +15,6 @@ function PublisherDashboard() {
           method: 'GET'
         });
         if (response.status === 401) {
-          // Not authenticated, redirect to login
           navigate('/');
         } else {
           const data = await response.json();
@@ -34,12 +32,10 @@ function PublisherDashboard() {
       const response = await axios.get('/logout');
       if (response.status === 200) {
         console.log('Logout successful');
-        // Clear the session cookie
         document.cookie = 'connect.user_cookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         sessionStorage.clear();
         localStorage.clear();
-  
-        navigate('/');//navigating back to login page
+        navigate('/');
       } else {
         console.error('Failed to logout:', response.data.error);
       }
@@ -51,9 +47,8 @@ function PublisherDashboard() {
   return (
     <div className="dashboard">
       Hello! {data.journal_name}
-      {/* <ResearchPapers />
-      <UploadResearch /> */}
       <UploadJournal />
+      <Publisher_Journals />
       <button onClick={handleLogout}>Logout</button>
     </div>
   );

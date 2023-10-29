@@ -9,6 +9,7 @@ import UploadResearch from "./uploadresearch";
 import UploadJournal from "./uploadjournal";
 import ReviewPaperlist from "./reviewpaperlist";
 import PublisherDashboard from "./publisher_dashboard";
+import Publisher_Journals from "./publisher_journals";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -24,6 +25,7 @@ root.render(
         <Route path='/reviewpaperlist' element={<ReviewPaperlist />} />
         <Route path='/publisher_dashboard' element={<PublisherDashboard />} />
         <Route path='/uploadjournal' element={<UploadJournal />} />
+        <Route path='/publisher_journals' element={<Publisher_Journals />} />
       </Routes>
     </Router>
   </React.StrictMode>

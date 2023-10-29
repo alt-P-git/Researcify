@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { view } from "./view.js";
 
 function ResearchPapers() {
   const [search, setSearch] = useState("");
@@ -60,40 +61,13 @@ function ResearchPapers() {
 
   const deleteFile = async (paperid) => {
     try {
-      const response = await axios.delete(`/deleteFile/${paperid}`);
+      const response = await axios.delete(`/deleteFile/researchpaper/${paperid}`);
       if (response.status === 200) {
-        const updatedPapers = rawList.filter((paper) => paper.id !== paperid);
-        setRawList(updatedPapers);
+        const updatedList = rawList.filter((paper) => paper.id !== paperid);
+        setRawList(updatedList);
       }
     } catch (error) {
       console.error("An error occurred:", error);
-    }
-  };
-
-  const view = async (paperId, type) => {
-    setErrorMessage("Loading...");
-    try {
-      const response = await axios.get(`/view/${type}/${paperId}`, {
-        responseType: "blob",
-      });
-      if (response.status === 200) {
-        setErrorMessage("");
-        const fileURL = window.URL.createObjectURL(
-          new Blob([response.data], { type: response.headers["content-type"] })
-        );
-        const fileLink = document.createElement("a");
-        fileLink.href = fileURL;
-        fileLink.setAttribute("target", "_blank");
-        fileLink.click();
-      }
-    } catch (error) {
-      if (error.response.status === 404) {
-        displayErrorMessage("File not found on server");
-      } else if (error.response.status === 500) {
-        displayErrorMessage("Server error");
-      } else {
-        console.error("An error occurred:", error);
-      }
     }
   };
 
@@ -132,7 +106,16 @@ function ResearchPapers() {
                 <h2>{journal.journal_name}</h2>
                 <p>{journal.journal_title}</p>
                 <p>Published on: {dateString}</p>
-                <button onClick={() => view(journal.journal_id, "journal")}>
+                <button
+                  onClick={() =>
+                    view(
+                      journal.journal_id,
+                      "journal",
+                      displayErrorMessage,
+                      setErrorMessage
+                    )
+                  }
+                >
                   View
                 </button>
               </div>
@@ -152,9 +135,7 @@ function ResearchPapers() {
                 <p>Title: {paper.title}</p>
                 <p>Subject: {paper.subject}</p>
                 <p>Published on: {dateString}</p>
-                <button onClick={() => view(paper.id, "researchpaper")}>
-                  View
-                </button>
+                <button onClick={() => view( paper.id, "researchpaper",displayErrorMessage, setErrorMessage)}>View</button>
                 {mode === "myResearchPaper" && (
                   <button onClick={() => deleteFile(paper.id)}>Delete</button>
                 )}
