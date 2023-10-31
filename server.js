@@ -86,9 +86,25 @@ con.connect(function (err) {
     return;
   }
 
+  app.get("/landingpage", (req, res) => {
+    var countquery = "SELECT (SELECT COUNT(*) FROM users) AS usercnt, (SELECT COUNT(*) FROM researchpaper_data) AS researchcnt, (SELECT COUNT(*) FROM journal_data) AS journalcnt";
+    con.query(countquery, function (err, result) {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Failed to execute query" });
+        return;
+      }
+      if (result.length > 0) {
+        res.status(200).json(result);
+      } else {
+        res.status(201).send("No data found");
+      }
+    });
+  });
+
   app.post("/register", (req, res) => {
-    var firstName = req.body.firstName;
-    var lastName = req.body.lastName;
+    var firstname = req.body.firstname;
+    var lastname = req.body.lastname;
     var email = req.body.email;
     var password = req.body.password;
 
@@ -106,14 +122,14 @@ con.connect(function (err) {
           function userPage() {
             //creating session
             req.session.user = {
-              firstname: firstName,
-              lastname: lastName,
+              firstname: firstname,
+              lastname: lastname,
               email: email,
               password: password,
             };
           }
           // inserting new user data
-          var sql = `INSERT INTO users (firstname, lastname, email, password) VALUES ('${firstName}', '${lastName}', '${email}', '${password}')`;
+          var sql = `INSERT INTO users (firstname, lastname, email, password) VALUES ('${firstname}', '${lastname}', '${email}', '${password}')`;
           con.query(sql, function (err, result) {
             if (err) {
               console.log(err);
@@ -135,11 +151,13 @@ con.connect(function (err) {
         lastname: req.session.user.lastname,
       });
     }
-    res.status(401).send("Invalid session");
-  });
-
-  app.get("/publisher_dashboard", (req, res) => {
-    if (req.session.publisher) {
+    else if (req.session.admin) {
+      return res.json({
+        firstname: req.session.admin.firstname,
+        lastname: req.session.admin.lastname,
+      });
+    }
+    else if (req.session.publisher) {
       return res.json({
         journal_name: req.session.publisher.journal_name,
       });
@@ -207,17 +225,71 @@ app.get("/logout", function (req, res) {
   });
 });
 
-app.post("/researchPaperList", isAuthenticatedUser, function (req, res) {
+app.get("/userprofile", isAuthenticatedUser, (req, res) => {
+  var userid = req.session.user.id;
+  var sql = "SELECT * FROM users WHERE id = ?";
+  con.query(sql, [userid], function (err, result) {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Database error" });
+      return;
+    }
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(201).send("User not found");
+    }
+  });
+});
+
+app.post("/updateuser", isAuthenticatedUser, (req, res) => {
+  var firstname = req.body.firstname;
+  var lastname = req.body.lastname;
+  var email = req.body.email;
+  var password = req.body.password;
+  var id = req.session.user.id;
+  var emailquery = `SELECT * FROM users WHERE BINARY email = ? AND id <> ?`;
+  if (firstname === "" || lastname === "" || email === "" || password === "") {
+    return res.status(400).send("Empty fields");
+  };
+  con.query(emailquery, [email, id], function (err, result) {
+      if (err) {
+        console.log(err);
+      }
+      if (Object.keys(result).length > 0) {
+        res.status(401).send("Email already registered");
+      } else {
+        var sql = "UPDATE users SET firstname = ?, lastname = ?, email = ?, password = ? WHERE id = ?";
+        con.query(sql, [firstname, lastname, email, password, id], function (err, result) {
+            if (err) {
+              console.log(err);
+              res.status(500).json({ error: "Database error" });
+              return;
+            }
+            if (result.affectedRows > 0) {
+              res.status(200).send("User updated successfully");
+            } else {
+              res.status(401).send("User not found");
+            }
+          });
+      }
+    }
+  );
+});
+
+app.post("/researchPaperList", isAuthenticated, function (req, res) {
   var search = req.body.search;
   var mode = req.body.mode;
-  const id = req.session.user.id;
+
+    const id = req.session.user.id;
+  
   const subject = req.body.subject;
 
   if (mode === "myResearchPaper") {
     if (search === "") {
-      var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE userid = ${id}`;
+      var sql = `SELECT id, userid, title, subject, pub_date, peer_review FROM researchpaper_data WHERE userid = ${id}`;
     } else {
-      var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE userid = ${id} AND title LIKE '%${search}%'`;
+      var sql = `SELECT id, userid, title, subject, pub_date, peer_review FROM researchpaper_data WHERE userid = ${id} AND title LIKE '%${search}%'`;
     }
     if (subject !== "ALL" && subject !== "") {
       sql = sql + ` AND subject = '${subject}'`;

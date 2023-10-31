@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { view } from "./view.js";
+import SearchFilter from './searchfilter.js';
 
 function ResearchPapers() {
   const [search, setSearch] = useState("");
-  const [mode, setMode] = useState("myResearchPaper");
+  const [mode, setMode] = useState("researchPaper");
   const [sortBy, setSortBy] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [rawList, setRawList] = useState([]);
@@ -73,27 +74,7 @@ function ResearchPapers() {
 
   return (
     <div className="researchPapers">
-      <select value={mode} onChange={handleModeChange}>
-        <option value="myResearchPaper">My Research Papers</option>
-        <option value="researchPaper">Research Papers</option>
-        <option value="journal">Journals</option>
-      </select>
-      <select value={subject} onChange={(e) => setSubject(e.target.value)}>
-        <option value="ALL">ALL</option>
-        <option value="CSE">CSE</option>
-        <option value="ECE">ECE</option>
-        <option value="ME">ME</option>
-      </select>
-      <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-        <option value="">Sort by</option>
-        <option value="title">Title</option>
-        <option value="pub_date">Date_Time</option>
-      </select>
-      <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
-        <option value="asc">Ascending</option>
-        <option value="desc">Descending</option>
-      </select>
-      <input type="text" onKeyDown={handleSearch} placeholder="Search..." />
+      <SearchFilter mode={mode} setMode={setMode} sortBy={sortBy} sortOrder={sortOrder} setSortOrder={setSortOrder} setSortBy={setSortBy} handleSearch={handleSearch} handleModeChange={handleModeChange} setSubject={setSubject} />
       {mode === "journal" ? (
         <div>
           <h1>Journals</h1>
@@ -106,18 +87,7 @@ function ResearchPapers() {
                 <h2>{journal.journal_name}</h2>
                 <p>{journal.journal_title}</p>
                 <p>Published on: {dateString}</p>
-                <button
-                  onClick={() =>
-                    view(
-                      journal.journal_id,
-                      "journal",
-                      displayErrorMessage,
-                      setErrorMessage
-                    )
-                  }
-                >
-                  View
-                </button>
+                <button onClick={() => view( journal.journal_id, "journal", displayErrorMessage, setErrorMessage )}>View</button>
               </div>
             );
           })}
@@ -135,6 +105,9 @@ function ResearchPapers() {
                 <p>Title: {paper.title}</p>
                 <p>Subject: {paper.subject}</p>
                 <p>Published on: {dateString}</p>
+                {mode === "myResearchPaper" && (
+                  <p>Peer review status: {paper.peer_review}</p>
+                )}
                 <button onClick={() => view( paper.id, "researchpaper",displayErrorMessage, setErrorMessage)}>View</button>
                 {mode === "myResearchPaper" && (
                   <button onClick={() => deleteFile(paper.id)}>Delete</button>

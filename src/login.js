@@ -24,6 +24,9 @@ function Login() {
       else if (role === 'publisher') {
         navigate('/publisher_dashboard');
       }
+      else if (role === 'admin') {
+        navigate('/admin_dashboard');
+      }
       else{
         navigate('/dashboard');
       }

@@ -23,7 +23,7 @@ function Register() {
       /* console.log('Registration successful'); */
       //wait for 2 seconds
         await new Promise(resolve => setTimeout(resolve, 2000));
-      navigate('/');
+      navigate('/login');
     } catch (error) {
       console.error('An error occurred:', error);
       if (error.response && error.response.status === 401) {
@@ -58,7 +58,7 @@ function Register() {
           <button type="submit" className="btn btn-primary form-control">Submit</button>
         </div>
       </form>
-      <Link to="/">Already have an account? Login here.</Link>
+      <Link to="/login">Already have an account? Login here.</Link>
     </div>
   );
 }

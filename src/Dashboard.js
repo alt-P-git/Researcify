@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import ResearchPapers from './researchpapers';
 import UploadResearch from './uploadresearch';
+import { handleLogout } from './handleLogout.js';
 
 function Dashboard() {
   const [data, setData] = useState({});
@@ -15,7 +16,6 @@ function Dashboard() {
           method: 'GET'
         });
         if (response.status === 401) {
-          // Not authenticated, redirect to login
           navigate('/');
         } else {
           const data = await response.json();
@@ -28,31 +28,13 @@ function Dashboard() {
     fetchData();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      const response = await axios.get('/logout');
-      if (response.status === 200) {
-        console.log('Logout successful');
-        // Clear the session cookie
-        document.cookie = 'connect.user_cookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        sessionStorage.clear();
-        localStorage.clear();
-  
-        navigate('/');//navigating back to login page
-      } else {
-        console.error('Failed to logout:', response.data.error);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  };
-
   return (
     <div className="dashboard">
       Hello! {data.firstname} {data.lastname}
+      <p><Link to="/userprofile">Profile</Link></p>
       <ResearchPapers />
       <UploadResearch />
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={() => handleLogout(navigate)}>Logout</button>
     </div>
   );
 }

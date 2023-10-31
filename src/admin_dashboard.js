@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import UploadJournal from './uploadjournal';
-import Publisher_Journals from './publisher_journals';
+import ResearchPapers from './researchpapers';
 import { handleLogout } from './handleLogout.js';
+import SearchFilter from './searchfilter';
 
-function PublisherDashboard() {
+function AdminDashboard() {
   const [data, setData] = useState({});
   const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ function PublisherDashboard() {
           method: 'GET'
         });
         if (response.status === 401) {
-          navigate('/');
+          navigate('/login');
         } else {
           const data = await response.json();
           setData(data);
@@ -30,12 +30,12 @@ function PublisherDashboard() {
 
   return (
     <div className="dashboard">
-      Hello! {data.journal_name}
-      <UploadJournal />
-      <Publisher_Journals />
+      Hello! {data.firstname} {data.lastname}
+      <SearchFilter />
+      <ResearchPapers />
       <button onClick={() => handleLogout(navigate)}>Logout</button>
     </div>
   );
 }
 
-export default PublisherDashboard;
+export default AdminDashboard;
