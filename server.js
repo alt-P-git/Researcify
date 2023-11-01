@@ -504,9 +504,16 @@ app.get("/view/:type/:paperId", isAuthenticated, async (req, res) => {
               console.error("An error occurred:", err);
               res.status(500).send("Internal Server Error");
             }
+            else if (isAuthenticatedUser && type == "researchpaper") {
+              viewsql = `INSERT INTO researchpaper_views (researchpaper_id, viewer_id) VALUES (?, ?);`;
+              con.query(viewsql, [paperId, req.session.user.id], function (err, result) {});
+            }
+            else if (isAuthenticatedUser && type == "journal") {
+              viewsql = `INSERT INTO journal_views (journal_id, viewer_id) VALUES (?, ?);`;
+              con.query(viewsql, [paperId, req.session.user.id], function (err, result) {});
+            }
           });
         } else {
-          //console.error(`File not found: ${filePath}`);
           res.status(404).send("File not found");
         }
       } else {
