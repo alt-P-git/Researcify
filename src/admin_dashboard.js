@@ -31,8 +31,7 @@ function AdminDashboard() {
   return (
     <div className="dashboard">
       Hello! {data.firstname} {data.lastname}
-      <SearchFilter />
-      <ResearchPapers />
+      
       <button onClick={() => handleLogout(navigate)}>Logout</button>
     </div>
   );

@@ -87,6 +87,7 @@ function ResearchPapers() {
                 <h2>{journal.journal_name}</h2>
                 <p>{journal.journal_title}</p>
                 <p>Published on: {dateString}</p>
+                <p>Views: {journal.view_count}</p>
                 <button onClick={() => view( journal.journal_id, "journal", displayErrorMessage, setErrorMessage )}>View</button>
               </div>
             );
@@ -105,6 +106,7 @@ function ResearchPapers() {
                 <p>Title: {paper.title}</p>
                 <p>Subject: {paper.subject}</p>
                 <p>Published on: {dateString}</p>
+                <p>Views: {paper.view_count}</p>
                 {mode === "myResearchPaper" && (
                   <p>Peer review status: {paper.peer_review}</p>
                 )}

@@ -87,6 +87,7 @@ function Publisher_Journals() {
               <h2>{journal.journal_name}</h2>
               <p>{journal.journal_title}</p>
               <p>Published on: {dateString}</p>
+              <p>Views: {journal.view_count}</p>
               <button onClick={() => view(journal.journal_id,  "journal", displayErrorMessage, setErrorMessage)}>View</button>
               <button onClick={() => deleteFile(journal.journal_id)}>Delete</button>
             </div>

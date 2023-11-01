@@ -287,13 +287,14 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
 
   if (mode === "myResearchPaper") {
     if (search === "") {
-      var sql = `SELECT id, userid, title, subject, pub_date, peer_review FROM researchpaper_data WHERE userid = ${id}`;
+      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, r.peer_review, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.userid = ${id}`;
     } else {
-      var sql = `SELECT id, userid, title, subject, pub_date, peer_review FROM researchpaper_data WHERE userid = ${id} AND title LIKE '%${search}%'`;
+      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, r.peer_review, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.userid = ${id} AND title LIKE '%${search}%'`;
     }
     if (subject !== "ALL" && subject !== "") {
-      sql = sql + ` AND subject = '${subject}'`;
-    }
+      sql = sql + ` AND r.subject = '${subject}'`;
+    };
+    sql = sql + ` GROUP BY r.id;`;
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -309,13 +310,14 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
     });
   } else if (mode === "researchPaper") {
     if (search === "") {
-      var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE peer_review = "accepted"`;
+      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.peer_review = "accepted"`;
     } else {
-      var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE title LIKE '%${search}%' AND peer_review = "accepted"`;
+      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.title LIKE '%${search}%' AND r.peer_review = "accepted"`;
     }
     if (subject !== "ALL" && subject !== "") {
-      sql = sql + ` AND subject = '${subject}'`;
-    }
+      sql = sql + ` AND r.subject = '${subject}'`;
+    };
+    sql = sql + ` GROUP BY r.id;`;
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -332,9 +334,9 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
     });
   } else if (mode === "journal") {
     if (search === "") {
-      var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.id;`;
+      var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date, COUNT(jv.journal_id) AS view_count FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.id LEFT JOIN journal_views AS jv ON jd.journal_id = jv.journal_id GROUP BY jd.journal_id;`;
     } else {
-      var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.journal_id WHERE journal_title LIKE '%${search}%'`;
+      var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date, COUNT(jv.journal_id) AS view_count FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.id LEFT JOIN journal_views AS jv ON jd.journal_id = jv.journal_id WHERE journal_title LIKE '%${search}%' GROUP BY jd.journal_id;`;
     }
     con.query(sql, function (err, result) {
       if (err) {
@@ -354,12 +356,93 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
   }
 });
 
+app.post("/adduser", isAuthenticatedAdmin, function (req, res) {
+  var firstname = req.body.firstname;
+  var lastname = req.body.lastname;
+  var email = req.body.email;
+  var password = req.body.password;
+
+  con.query(
+    `SELECT * FROM users WHERE BINARY email = '${email}'`,
+    function (err, result) {
+      if (err) {
+        console.log(err);
+      }
+      if (Object.keys(result).length > 0) {
+        res.status(401).send("Email already registered");
+      } else {
+        var sql = `INSERT INTO users (firstname, lastname, email, password) VALUES ('${firstname}', '${lastname}', '${email}', '${password}')`;
+        con.query(sql, function (err, result) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(200).send("Successfully added user");
+          }
+        });
+      }
+    }
+  );
+});
+
+app.post("/addpublisher", isAuthenticatedAdmin, function (req, res) {
+  var journal_name = req.body.journal_name;
+  var email = req.body.email;
+  var password = req.body.password;
+
+  con.query(
+    `SELECT * FROM publisher WHERE BINARY email = '${email}'`,
+    function (err, result) {
+      if (err) {
+        console.log(err);
+      }
+      if (Object.keys(result).length > 0) {
+        res.status(401).send("Email already registered");
+      } else {
+        // inserting new publisher data
+        var sql = `INSERT INTO publisher (journal_name, email, password) VALUES ('${journal_name}', '${email}', '${password}')`;
+        con.query(sql, function (err, result) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(200).send("Successfully added publisher");
+          }
+        });
+      }
+    }
+  );
+});
+
+/* app.post("/deletepublisher", isAuthenticatedAdmin, function (req, res) {
+  var publisher_id = req.body.publisher_id;
+  con.query(
+    `SELECT * FROM publisher WHERE id = '${publisher_id}'`,
+    function (err, result) {
+      if (err) {
+        console.log(err);
+      }
+      if (Object.keys(result).length > 0) {
+        var sql = `DELETE FROM publisher WHERE id = '${publisher_id}'`;
+        con.query(sql, function (err, result) {
+          if (err) {
+            console.log(err);
+          } else {
+
+            res.status(200).send("Successfully deleted publisher");
+          }
+        });
+      } else {
+        res.status(401).send("Publisher not found");
+      }
+    }
+  );
+}); */
+
 app.post("/myJournals", isAuthenticatedPublisher, function (req, res) {
   var search = req.body.search;
   if (search === "") {
-    var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.id WHERE jd.publisher_id = ?;`;
+    var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date, COUNT(jv.journal_id) AS view_count FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.id LEFT JOIN journal_views AS jv ON jd.journal_id = jv.journal_id WHERE jd.publisher_id = ? GROUP BY jd.journal_id;`;
   } else {
-    var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.journal_id WHERE journal_title LIKE '%${search}%' WHERE jd.publisher_id = ?;`;
+    var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date, COUNT(jv.journal_id) AS view_count FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.journal_id LEFT JOIN journal_views AS jv ON jd.journal_id = jv.journal_id WHERE journal_title LIKE '%${search}%' AND jd.publisher_id = ? GROUP BY jd.journal_id;`;
   }
   con.query(sql, [req.session.publisher.id], function (err, result) {
     if (err) {
@@ -478,7 +561,7 @@ app.get("/view/:type/:paperId", isAuthenticated, async (req, res) => {
     var filenamesql = `SELECT file_name FROM researchpaper_data WHERE id = ?`;
     if (type == "journal") {
       filenamesql = `SELECT file_name FROM journal_data WHERE journal_id = ?`;
-    }
+    };
     var fileName = "";
 
     con.query(filenamesql, [paperId], function (err, result) {
@@ -504,11 +587,11 @@ app.get("/view/:type/:paperId", isAuthenticated, async (req, res) => {
               console.error("An error occurred:", err);
               res.status(500).send("Internal Server Error");
             }
-            else if (isAuthenticatedUser && type == "researchpaper") {
+            else if (req.session.user && type == "researchpaper") {
               viewsql = `INSERT INTO researchpaper_views (researchpaper_id, viewer_id) VALUES (?, ?);`;
               con.query(viewsql, [paperId, req.session.user.id], function (err, result) {});
             }
-            else if (isAuthenticatedUser && type == "journal") {
+            else if (req.session.user && type == "journal") {
               viewsql = `INSERT INTO journal_views (journal_id, viewer_id) VALUES (?, ?);`;
               con.query(viewsql, [paperId, req.session.user.id], function (err, result) {});
             }
@@ -598,7 +681,22 @@ app.delete("/deleteFile/:type/:paperid", (req, res) => {
               res.status(201).json({ error: "Deletion unsuccessful" });
               return;
             } else {
-              res.status(200).send("Deletion successful");
+              var delview = "";
+              if (type === "researchpaper") {
+                delview = "DELETE FROM researchpaper_views WHERE researchpaper_id = ?";
+              }
+              else if (type === "journal") {
+                delview = "DELETE FROM journal_views WHERE journal_id = ?";
+              };
+              con.query(delview, [paperid], function (err, result) {
+                if (err) {
+                  //console.log(err);
+                  res.status(201).json({ error: "Deletion unsuccessful" });
+                  return;
+                } else {
+                  res.status(200).send("Deletion successful");
+                };
+            });
             }
           });
         } catch (err) {

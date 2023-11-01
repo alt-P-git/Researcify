@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { handleLogout } from './handleLogout.js';
+import { view } from "./view.js";
 
 function ResearchPapers() {
   const [search, setSearch] = useState("");
@@ -49,35 +50,9 @@ function ResearchPapers() {
     }
   });
 
-  const viewResearchPaper = async (paperId) => {
-    try {
-      const response = await axios.get(`/viewResearchPaper/${paperId}`, {
-        responseType: "blob",
-      });
-      if (response.status === 200) {
-        setErrorMessage("");
-        const fileURL = window.URL.createObjectURL(
-          new Blob([response.data], { type: response.headers["content-type"] })
-        );
-        const fileLink = document.createElement("a");
-        fileLink.href = fileURL;
-        fileLink.setAttribute("target", "_blank");
-        fileLink.click();
-      }
-    } catch (error) {
-      if (error.response.status === 404) {
-        setErrorMessage("File not found");
-      } else if (error.response.status === 500) {
-        setErrorMessage("Server error");
-      } else {
-        console.error("An error occurred:", error);
-      }
-    }
-  };
-
   const handleReview = async (paperId, decision) => {
     try {
-      const response = await axios.post(`/reviewResearchPaper/${paperId}`, {
+      const response = await axios.post(`/review/${paperId}`, {
         decision,
       });
       if (response.status === 200) {
@@ -117,7 +92,7 @@ function ResearchPapers() {
           <div key={paper.id}>
             <p>Title: {paper.title}</p>
             <p>Subject: {paper.subject}</p>
-            <button onClick={() => viewResearchPaper(paper.id)}>View</button>
+            <button onClick={() => view( paper.id, "researchpaper",errorMessage, setErrorMessage)}>View</button>
             <button onClick={() => handleReview(paper.id, "accepted")}>
               Accept
             </button>
