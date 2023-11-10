@@ -1,0 +1,51 @@
+/* SearchFilter.css */
+
+.search-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  position: relative;
+}
+
+.search-input {
+  width: 300px; /* Adjust the width as needed */
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.advanced-search {
+  display: none;
+  margin-top: 10px;
+}
+
+.advanced-search.visible {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.advanced-search button {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.advanced-search select {
+  margin: 5px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* Add more styling as needed */

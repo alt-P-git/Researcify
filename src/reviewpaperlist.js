@@ -1,16 +1,21 @@
+// ReviewPaperlist.js
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { handleLogout } from './handleLogout.js';
+import { handleLogout } from "./handleLogout.js";
 import { view } from "./view.js";
+import "./ReviewPaperlist.css"; // Import the CSS file
 
-function ResearchPapers() {
+function ReviewPaperlist() {
   const [search, setSearch] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [researchPaperList, setResearchPaperList] = useState([]);
   const [subject, setSubject] = useState("ALL");
   const [sortBy, setSortBy] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false); // State to toggle advanced search
+
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -69,42 +74,89 @@ function ResearchPapers() {
 
   return (
     <div className="researchPapers">
-      <input type="text" onKeyDown={handleSearch} placeholder="Search..." />
-      <select value={subject} onChange={(e) => setSubject(e.target.value)}>
-        <option value="ALL">ALL</option>
-        <option value="CSE">CSE</option>
-        <option value="ECE">ECE</option>
-        <option value="ME">ME</option>
-      </select>
-      <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-        <option value="">Sort by</option>
-        <option value="title">Title</option>
-        <option value="pub_date">Date_Time</option>
-      </select>
-      <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
-        <option value="asc">Ascending</option>
-        <option value="desc">Descending</option>
-      </select>
-      <div>
-        <h1>Research Papers</h1>
-        <p>{errorMessage}</p>
-        {sortedResearchPaperList.map((paper) => (
-          <div key={paper.id}>
-            <p>Title: {paper.title}</p>
-            <p>Subject: {paper.subject}</p>
-            <button onClick={() => view( paper.id, "researchpaper",errorMessage, setErrorMessage)}>View</button>
-            <button onClick={() => handleReview(paper.id, "accepted")}>
-              Accept
-            </button>
-            <button onClick={() => handleReview(paper.id, "rejected")}>
-              Reject
-            </button>
-          </div>
-        ))}
+      <div className="scrollable-container">
+        <div className="search-bar">
+          <input
+            type="text"
+            onKeyDown={handleSearch}
+            placeholder="Search..."
+            className="search-input"
+          />
+          {showAdvancedSearch && (
+            <>
+              <select
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              >
+                <option value="ALL">ALL</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+                <option value="ME">ME</option>
+              </select>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="">Sort by</option>
+                <option value="title">Title</option>
+                <option value="pub_date">Date_Time</option>
+              </select>
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </>
+          )}
+        </div>
+        <button
+          onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+          className="advanced-search-button"
+        >
+          {showAdvancedSearch ? "Hide Advanced Search" : "Show Advanced Search"}
+        </button>
+        <div>
+          <h1 className="research-heading">Research Papers</h1>
+          <p className="error-message">{errorMessage}</p>
+          {sortedResearchPaperList.map((paper) => (
+            <div key={paper.id} className="research-paper-container">
+              <h3>{paper.title}</h3>
+              <p>Subject: {paper.subject}</p>
+              <p>Description: {paper.description}</p>
+              <button
+                className="view-button"
+                onClick={() =>
+                  view(
+                    paper.id,
+                    "researchpaper",
+                    errorMessage,
+                    setErrorMessage
+                  )
+                }
+              >
+                View
+              </button>
+              <button
+                className="accept-button"
+                onClick={() => handleReview(paper.id, "accepted")}
+              >
+                Accept
+              </button>
+              <button
+                className="reject-button"
+                onClick={() => handleReview(paper.id, "rejected")}
+              >
+                Reject
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
       <button onClick={() => handleLogout(navigate)}>Logout</button>
     </div>
   );
 }
 
-export default ResearchPapers;
+export default ReviewPaperlist;

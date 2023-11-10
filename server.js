@@ -287,9 +287,9 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
 
   if (mode === "myResearchPaper") {
     if (search === "") {
-      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, r.peer_review, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.userid = ${id}`;
+      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, r.peer_review, r.description, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.userid = ${id}`;
     } else {
-      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, r.peer_review, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.userid = ${id} AND title LIKE '%${search}%'`;
+      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, r.peer_review, r.description, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.userid = ${id} AND title LIKE '%${search}%'`;
     }
     if (subject !== "ALL" && subject !== "") {
       sql = sql + ` AND r.subject = '${subject}'`;
@@ -310,9 +310,9 @@ app.post("/researchPaperList", isAuthenticated, function (req, res) {
     });
   } else if (mode === "researchPaper") {
     if (search === "") {
-      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.peer_review = "accepted"`;
+      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, r.description, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.peer_review = "accepted"`;
     } else {
-      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.title LIKE '%${search}%' AND r.peer_review = "accepted"`;
+      var sql = `SELECT r.id, r.userid, r.title, r.subject, r.pub_date, r.description, COUNT(v.researchpaper_id) AS view_count FROM researchpaper_data AS r LEFT JOIN researchpaper_views AS v ON r.id = v.researchpaper_id WHERE r.title LIKE '%${search}%' AND r.peer_review = "accepted"`;
     }
     if (subject !== "ALL" && subject !== "") {
       sql = sql + ` AND r.subject = '${subject}'`;
@@ -398,7 +398,6 @@ app.post("/addpublisher", isAuthenticatedAdmin, function (req, res) {
       if (Object.keys(result).length > 0) {
         res.status(401).send("Email already registered");
       } else {
-        // inserting new publisher data
         var sql = `INSERT INTO publisher (journal_name, email, password) VALUES ('${journal_name}', '${email}', '${password}')`;
         con.query(sql, function (err, result) {
           if (err) {
@@ -462,9 +461,9 @@ app.post("/reviewPaperList", isAuthenticatedPeer, function (req, res) {
   var search = req.body.search;
   var subject = req.body.subject;
   if (search === "") {
-    var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE peer_review = "pending"`;
+    var sql = `SELECT id, userid, title, subject, pub_date, description FROM researchpaper_data WHERE peer_review = "pending"`;
   } else {
-    var sql = `SELECT id, userid, title, subject, pub_date FROM researchpaper_data WHERE title LIKE '%${search}%' AND peer_review = "pending"`;
+    var sql = `SELECT id, userid, title, subject, pub_date, description FROM researchpaper_data WHERE title LIKE '%${search}%' AND peer_review = "pending"`;
   }
   if (subject !== "ALL" && subject !== "") {
     sql = sql + ` AND subject = '${subject}'`;
@@ -532,7 +531,7 @@ app.post("/uploadresearch", isAuthenticatedUser, upload.single("file"), (req, re
       return res.status(400).send("File is empty");
     }
     var uploadsql =
-      "INSERT INTO `researchpaper_data` ( `userid`, `title`, `subject`, `file_name`) VALUES (?, ?, ?, ?);";
+      "INSERT INTO `researchpaper_data` ( `userid`, `title`, `subject`, `file_name`, `description`) VALUES (?, ?, ?, ?, ?);";
     con.query(
       uploadsql,
       [
@@ -540,6 +539,7 @@ app.post("/uploadresearch", isAuthenticatedUser, upload.single("file"), (req, re
         req.body.title,
         req.body.subject,
         req.file.filename,
+        req.body.description
       ],
       function (err, result) {
         if (err) {

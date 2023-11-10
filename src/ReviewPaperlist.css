@@ -1,0 +1,76 @@
+/* ReviewPaperlist.css */
+
+.researchPapers {
+    padding: 20px;
+    max-width: 50vw;
+    min-width: 300px;
+    margin: auto;
+  }
+  
+  .scrollable-container {
+    max-height: 700px;
+    overflow-y: auto;
+  }
+  
+  .research-heading {
+    color: #3498db; /* Header color */
+  }
+  
+  .search-input {
+    margin: 0 auto; /* Center the search bar */
+    display: block;
+  }
+  
+  /* Styles for individual research papers */
+  .research-paper-container {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #ecf0f1; /* Background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .research-paper-container h3 {
+    color: #2c3e50; /* Title color */
+    margin-bottom: 8px;
+  }
+  
+  .research-paper-container p {
+    color: #555; /* Text color */
+    margin-bottom: 5px;
+  }
+  
+  /* Button Styles */
+  .research-paper-container button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 5px;
+  }
+  
+  .research-paper-container button.view-button {
+    background-color: #3498db; /* View button color */
+    color: #fff; /* Text color */
+  }
+  
+  .research-paper-container button.accept-button {
+    background-color: #27ae60; /* Accept button color */
+    color: #fff; /* Text color */
+  }
+  
+  .research-paper-container button.reject-button {
+    background-color: #e74c3c; /* Reject button color */
+    color: #fff; /* Text color */
+  }
+  
+  .research-paper-container button:hover {
+    opacity: 0.9;
+  }
+  
+  .advanced-search-button {
+    display: block;
+    margin: 10px auto; /* Center the advanced search button */
+  }  

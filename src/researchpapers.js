@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { view } from "./view.js";
 import SearchFilter from './searchfilter.js';
+import "./ResearchPapers.css";
 
 function ResearchPapers() {
   const [search, setSearch] = useState("");
@@ -73,21 +74,19 @@ function ResearchPapers() {
   };
 
   return (
-    <div className="researchPapers">
+    <div className="researchPapers scrollable-container">
       <SearchFilter mode={mode} setMode={setMode} sortBy={sortBy} sortOrder={sortOrder} setSortOrder={setSortOrder} setSortBy={setSortBy} handleSearch={handleSearch} handleModeChange={handleModeChange} setSubject={setSubject} />
       {mode === "journal" ? (
         <div>
-          <h1>Journals</h1>
+          <h1 className="journal-heading">Journals</h1>
           <p>{errorMessage}</p>
           {sortedList.map((journal) => {
             let date = new Date(journal.pub_date);
             let dateString = date.toISOString().split("T")[0];
             return (
-              <div key={journal.journal_id}>
-                <h2>{journal.journal_name}</h2>
-                <p>{journal.journal_title}</p>
-                <p>Published on: {dateString}</p>
-                <p>Views: {journal.view_count}</p>
+              <div key={journal.journal_id} className="journal-container">
+                <p>{journal.journal_name} | {journal.journal_title}</p>
+                <p>Published on: {dateString} | Views: {journal.view_count}</p>
                 <button onClick={() => view( journal.journal_id, "journal", displayErrorMessage, setErrorMessage )}>View</button>
               </div>
             );
@@ -95,18 +94,17 @@ function ResearchPapers() {
         </div>
       ) : (
         <div>
-          <h1>Research Papers</h1>
+          <h1 className="research-heading">Research Papers</h1>
           <p>{errorMessage}</p>
           {sortedList.map((paper) => {
             let date = new Date(paper.pub_date);
             let dateString = date.toISOString().split("T")[0];
             return (
-              <div key={paper.id}>
-                <h2>Id: {paper.id}</h2>
-                <p>Title: {paper.title}</p>
+              <div key={paper.id} className="research-paper-container">
+                <p>Id: {paper.id} | Title: {paper.title}</p>
                 <p>Subject: {paper.subject}</p>
-                <p>Published on: {dateString}</p>
-                <p>Views: {paper.view_count}</p>
+                <p>Description: {paper.description}</p>
+                <p>Published on: {dateString} | Views: {paper.view_count}</p>
                 {mode === "myResearchPaper" && (
                   <p>Peer review status: {paper.peer_review}</p>
                 )}

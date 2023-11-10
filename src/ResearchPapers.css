@@ -1,0 +1,58 @@
+/* ResearchPapers.css */
+
+.researchPapers {
+    padding: 20px;
+    max-width: 50vw;
+    min-width: 300px;
+    margin: auto;
+}
+  
+  .scrollable-container {
+    max-height: 700px;
+    overflow-y: auto;
+  }
+  
+  .journal-heading,
+  .research-heading {
+    color: #3498db; /* Header color */
+  }
+  
+  /* Styles for individual research papers or journals */
+  .research-paper-container,
+  .journal-container {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #ecf0f1; /* Background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .research-paper-container h2,
+  .journal-container h2 {
+    color: #2c3e50; /* Title color */
+    margin-bottom: 8px;
+  }
+  
+  .research-paper-container p,
+  .journal-container p {
+    color: #555; /* Text color */
+    margin-bottom: 5px;
+  }
+  
+  .research-paper-container button,
+  .journal-container button {
+    background-color: #3498db; /* Button color */
+    color: #fff; /* Button text color */
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .research-paper-container button:hover,
+  .journal-container button:hover {
+    background-color: #2980b9; /* Hover state color */
+  }
+  
