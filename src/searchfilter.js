@@ -40,7 +40,7 @@ function SearchFilter({
           className="search-input"
         />
       </div>
-      <button onClick={toggleAdvancedSearch}>
+      <button onClick={toggleAdvancedSearch} className="advanced-search-button">
         {showAdvancedSearch ? "Hide Advanced Search" : "Show Advanced Search"}
       </button>
       <div className={`advanced-search ${showAdvancedSearch ? "visible" : ""}`}>

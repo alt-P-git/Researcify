@@ -120,10 +120,7 @@ function ReviewPaperlist() {
             </>
           )}
         </div>
-        <button
-          onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-          className="advanced-search-button"
-        >
+        <button onClick={() => setShowAdvancedSearch(!showAdvancedSearch)} className="advanced-search-button" >
           {showAdvancedSearch ? "Hide Advanced Search" : "Show Advanced Search"}
         </button>
         <div>

@@ -1,5 +1,3 @@
-/* SearchFilter.css */
-
 .search-filter {
   display: flex;
   flex-direction: column;
@@ -12,11 +10,22 @@
 }
 
 .search-input {
-  width: 300px; /* Adjust the width as needed */
+  width: 300px;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 5px;
+}
+
+.advanced-search-button {
+  background-color: #99B0FF;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-right: 10px;
 }
 
 .advanced-search {
@@ -30,17 +39,6 @@
   justify-content: center;
 }
 
-.advanced-search button {
-  background-color: #3498db;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-  margin-right: 10px;
-}
-
 .advanced-search select {
   margin: 5px;
   padding: 8px;
@@ -48,4 +46,40 @@
   border-radius: 5px;
 }
 
-/* Add more styling as needed */
+.advanced-search select {
+  margin: 5px;
+  padding: px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #F4F4F4;
+  color: #333;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.advanced-search select:hover,
+.advanced-search select:focus {
+  border-color: #3498db;
+}
+
+.advanced-search select::after {
+  content: "\25BC";
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #555;
+}
+
+/* Style the dropdown options */
+.advanced-search select option {
+  background-color: #F4F4F4;
+  color: #333;
+  font-size: 14px;
+}
+
+.advanced-search select:focus {
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}

@@ -52,12 +52,12 @@
   }
   
   .research-paper-container button.view-button {
-    background-color: #3498db; /* View button color */
+    background-color: #99B0FF; /* View button color */
     color: #fff; /* Text color */
   }
   
   .research-paper-container button.accept-button {
-    background-color: #27ae60; /* Accept button color */
+    background-color: #40FF76; /* Accept button color */
     color: #fff; /* Text color */
   }
   
@@ -73,4 +73,4 @@
   .advanced-search-button {
     display: block;
     margin: 10px auto; /* Center the advanced search button */
-  }  
+  }
