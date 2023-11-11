@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { view } from "./view.js";
+import "./ResearchPapers.css"; // Import the CSS file
 
 function Publisher_Journals() {
   const [search, setSearch] = useState("");
@@ -76,20 +77,20 @@ function Publisher_Journals() {
         <option value="desc">Descending</option>
       </select>
       <input type="text" onKeyDown={handleSearch} placeholder="Search..." />
-      <div>
-        <h1>Journals</h1>
+      <div className="scrollable-container">
+        <h1 className="journal-heading">Journals</h1>
         <p>{errorMessage}</p>
         {sortedList.map((journal) => {
           let date = new Date(journal.pub_date);
           let dateString = date.toISOString().split("T")[0];
           return (
-            <div key={journal.journal_id}>
+            <div className="journal-container" key={journal.journal_id}>
               <h2>{journal.journal_name}</h2>
               <p>{journal.journal_title}</p>
               <p>Published on: {dateString}</p>
               <p>Views: {journal.view_count}</p>
-              <button onClick={() => view(journal.journal_id,  "journal", displayErrorMessage, setErrorMessage)}>View</button>
-              <button onClick={() => deleteFile(journal.journal_id)}>Delete</button>
+              <button className="view-btn" onClick={() => view(journal.journal_id,  "journal", displayErrorMessage, setErrorMessage)}>View</button>
+              <button className="delete-btn" onClick={() => deleteFile(journal.journal_id)}>Delete</button>
             </div>
           );
         })}

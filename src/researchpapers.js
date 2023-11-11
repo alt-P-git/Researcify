@@ -108,9 +108,9 @@ function ResearchPapers() {
                 {mode === "myResearchPaper" && (
                   <p>Peer review status: {paper.peer_review}</p>
                 )}
-                <button onClick={() => view( paper.id, "researchpaper",displayErrorMessage, setErrorMessage)}>View</button>
+                <button className="view-btn" onClick={() => view( paper.id, "researchpaper",displayErrorMessage, setErrorMessage)}>View</button>
                 {mode === "myResearchPaper" && (
-                  <button onClick={() => deleteFile(paper.id)}>Delete</button>
+                  <button className="delete-btn" onClick={() => deleteFile(paper.id)}>Delete</button>
                 )}
               </div>
             );

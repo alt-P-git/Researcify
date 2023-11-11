@@ -1,5 +1,3 @@
-// ReviewPaperlist.js
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -47,6 +45,18 @@ function ReviewPaperlist() {
     }
   };
 
+  const [subjects, setSubjects] = useState([]);
+
+  useEffect(() => {
+    axios.get('/subjects')
+      .then(response => {
+        setSubjects(response.data || []); // Ensure subjects is set to an array
+      })
+      .catch(error => {
+        console.error('Error fetching subjects:', error);
+      });
+  }, []);
+
   const sortedResearchPaperList = [...researchPaperList].sort((a, b) => {
     if (sortOrder === "asc") {
       return a[sortBy] > b[sortBy] ? 1 : -1;
@@ -84,15 +94,14 @@ function ReviewPaperlist() {
           />
           {showAdvancedSearch && (
             <>
-              <select
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-              >
-                <option value="ALL">ALL</option>
-                <option value="CSE">CSE</option>
-                <option value="ECE">ECE</option>
-                <option value="ME">ME</option>
-              </select>
+              <select value={subject} onChange={(e) => setSubject(e.target.value)}>
+              <option value="">Select Subject</option>
+              {subjects.map((subj, index) => (
+                <option key={index} value={subj.subjects}>
+                  {subj.subjects}
+                </option>
+              ))}
+            </select>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}

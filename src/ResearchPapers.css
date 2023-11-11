@@ -49,10 +49,24 @@
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+    margin-right: 5px;
+  }
+  
+  .research-paper-container button.view-btn,
+  .journal-container button.view-btn {
+    background-color: #3498db;
+      color: #fff;
+      border: none;
+  }
+  
+  .research-paper-container button.delete-btn,
+  .journal-container button.delete-btn {
+      background-color: #e74c3c;
+      color: #fff;
+      border: none;
   }
   
   .research-paper-container button:hover,
   .journal-container button:hover {
-    background-color: #2980b9; /* Hover state color */
+    opacity: 0.9;
   }
-  

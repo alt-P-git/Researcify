@@ -1,0 +1,10 @@
+.overlay-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+  }
+  

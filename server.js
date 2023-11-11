@@ -277,6 +277,22 @@ app.post("/updateuser", isAuthenticatedUser, (req, res) => {
   );
 });
 
+app.get("/subjects", function (req, res) {
+  var sql = "SELECT subjects FROM researchpaper_subjects";
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Failed to fetch subjects" });
+      return;
+    }
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(201).send("No data found");
+    }
+  });
+});
+
 app.post("/researchPaperList", isAuthenticated, function (req, res) {
   var search = req.body.search;
   var mode = req.body.mode;
