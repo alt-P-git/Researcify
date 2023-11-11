@@ -17,12 +17,13 @@ function SearchFilter({
   const [subjects, setSubjects] = useState([]);
 
   useEffect(() => {
-    axios.get('/subjects')
-      .then(response => {
+    axios
+      .get("/subjects")
+      .then((response) => {
         setSubjects(response.data || []); // Ensure subjects is set to an array
       })
-      .catch(error => {
-        console.error('Error fetching subjects:', error);
+      .catch((error) => {
+        console.error("Error fetching subjects:", error);
       });
   }, []);
 
@@ -32,17 +33,26 @@ function SearchFilter({
 
   return (
     <div className="search-filter">
-      <div className="search-bar">
-        <input
-          type="text"
-          onKeyDown={handleSearch}
-          placeholder="Search..."
-          className="search-input"
-        />
+      <div className="alwaysvisible">
+        <div className="search-bar">
+          <input
+            type="text"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch(e.target.value);
+              }
+            }}
+            placeholder="Search..."
+            className="search-input"
+          />
+        </div>
+        <button
+          onClick={toggleAdvancedSearch}
+          className="advanced-search-button"
+        >
+          {showAdvancedSearch ? "Hide Advanced Search" : "Show Advanced Search"}
+        </button>
       </div>
-      <button onClick={toggleAdvancedSearch} className="advanced-search-button">
-        {showAdvancedSearch ? "Hide Advanced Search" : "Show Advanced Search"}
-      </button>
       <div className={`advanced-search ${showAdvancedSearch ? "visible" : ""}`}>
         {showAdvancedSearch && (
           <>
@@ -51,7 +61,10 @@ function SearchFilter({
               <option value="researchPaper">Research Papers</option>
               <option value="journal">Journals</option>
             </select>
-            <select value={subject} onChange={(e) => setSubject(e.target.value)}>
+            <select
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+            >
               <option value="">Select Subject</option>
               {subjects.map((subj, index) => (
                 <option key={index} value={subj.subjects}>

@@ -5,14 +5,25 @@ import { view } from "./view.js";
 import SearchFilter from './searchfilter.js';
 import "./ResearchPapers.css";
 
-function ResearchPapers() {
-  const [search, setSearch] = useState("");
-  const [mode, setMode] = useState("researchPaper");
-  const [sortBy, setSortBy] = useState("");
+function ResearchPapers({
+  search,
+  mode,
+  sortBy,
+  sortOrder,
+  subject,
+  setSortOrder,
+  setSortBy,
+  handleSearch,
+  setSubject,
+  setMode,
+}) {
+  //const [search, setSearch] = useState("");
+  //const [mode, setMode] = useState("researchPaper");
+  //const [sortBy, setSortBy] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [rawList, setRawList] = useState([]);
-  const [subject, setSubject] = useState("ALL");
-  const [sortOrder, setSortOrder] = useState("asc");
+  //const [subject, setSubject] = useState("ALL");
+  //const [sortOrder, setSortOrder] = useState("asc");
   const navigate = useNavigate();
 
   const displayErrorMessage = (message) => {
@@ -51,11 +62,11 @@ function ResearchPapers() {
     }
   });
 
-  const handleSearch = (event) => {
+  /* const handleSearch = (event) => {
     if (event.key === "Enter") {
       setSearch(event.target.value);
     }
-  };
+  }; */
 
   const handleModeChange = (event) => {
     setMode(event.target.value);
@@ -74,8 +85,7 @@ function ResearchPapers() {
   };
 
   return (
-    <div className="researchPapers scrollable-container">
-      <SearchFilter mode={mode} setMode={setMode} sortBy={sortBy} sortOrder={sortOrder} setSortOrder={setSortOrder} setSortBy={setSortBy} handleSearch={handleSearch} handleModeChange={handleModeChange} setSubject={setSubject} />
+    <div className="researchPapers">
       {mode === "journal" ? (
         <div>
           <h1 className="journal-heading">Journals</h1>
@@ -102,8 +112,7 @@ function ResearchPapers() {
             return (
               <div key={paper.id} className="research-paper-container">
                 <p>Id: {paper.id} | Title: {paper.title}</p>
-                <p>Subject: {paper.subject}</p>
-                <p>Description: {paper.description}</p>
+                <p>Subject: {paper.subject} | Description: {paper.description}</p>
                 <p>Published on: {dateString} | Views: {paper.view_count}</p>
                 {mode === "myResearchPaper" && (
                   <p>Peer review status: {paper.peer_review}</p>

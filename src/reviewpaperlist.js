@@ -92,6 +92,8 @@ function ReviewPaperlist() {
             placeholder="Search..."
             className="search-input"
           />
+          </div>
+          <div className={`advanced-search ${showAdvancedSearch ? "visible" : ""}`}>
           {showAdvancedSearch && (
             <>
               <select value={subject} onChange={(e) => setSubject(e.target.value)}>
@@ -133,29 +135,20 @@ function ReviewPaperlist() {
               <p>Description: {paper.description}</p>
               <button
                 className="view-button"
-                onClick={() =>
-                  view(
+                onClick={() => view(
                     paper.id,
                     "researchpaper",
                     errorMessage,
                     setErrorMessage
-                  )
-                }
-              >
-                View
-              </button>
+                  )}>View</button>
               <button
                 className="accept-button"
                 onClick={() => handleReview(paper.id, "accepted")}
-              >
-                Accept
-              </button>
+              >Accept</button>
               <button
                 className="reject-button"
                 onClick={() => handleReview(paper.id, "rejected")}
-              >
-                Reject
-              </button>
+              >Reject</button>
             </div>
           ))}
         </div>
