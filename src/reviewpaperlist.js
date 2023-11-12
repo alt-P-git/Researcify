@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { handleLogout } from "./handleLogout.js";
 import { view } from "./view.js";
-import "./ReviewPaperlist.css"; // Import the CSS file
+import "./ReviewPaperlist.css";
 
 function ReviewPaperlist() {
   const [search, setSearch] = useState("");
@@ -49,7 +49,7 @@ function ReviewPaperlist() {
   useEffect(() => {
     axios.get('/subjects')
       .then(response => {
-        setSubjects(response.data || []); // Ensure subjects is set to an array
+        setSubjects(response.data || []);
       })
       .catch(error => {
         console.error('Error fetching subjects:', error);

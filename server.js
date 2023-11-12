@@ -457,7 +457,7 @@ app.post("/myJournals", isAuthenticatedPublisher, function (req, res) {
   if (search === "") {
     var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date, COUNT(jv.journal_id) AS view_count FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.id LEFT JOIN journal_views AS jv ON jd.journal_id = jv.journal_id WHERE jd.publisher_id = ? GROUP BY jd.journal_id;`;
   } else {
-    var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date, COUNT(jv.journal_id) AS view_count FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.journal_id LEFT JOIN journal_views AS jv ON jd.journal_id = jv.journal_id WHERE journal_title LIKE '%${search}%' AND jd.publisher_id = ? GROUP BY jd.journal_id;`;
+    var sql = `SELECT jd.journal_id, pub.journal_name, jd.journal_title, jd.pub_date, COUNT(jv.journal_id) AS view_count FROM journal_data AS jd JOIN publisher AS pub ON jd.publisher_id = pub.id LEFT JOIN journal_views AS jv ON jd.journal_id = jv.journal_id WHERE journal_title LIKE '%${search}%' AND jd.publisher_id = ? GROUP BY jd.journal_id;`;
   }
   con.query(sql, [req.session.publisher.id], function (err, result) {
     if (err) {

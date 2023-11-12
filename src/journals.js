@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { handleLogout } from "./handleLogout.js";
 
 function Journals() {
   const [search, setSearch] = useState("");
@@ -19,8 +20,7 @@ function Journals() {
           sortby: sortby,
         });
         if (response.status === 401) {
-          // error by server
-          /* navigate("/dashboard"); */
+          handleLogout(navigate);
         } else {
           setJournalList(response.data);
         }

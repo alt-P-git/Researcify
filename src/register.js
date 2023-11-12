@@ -20,8 +20,6 @@ function Register() {
         password: password
       });
       setregisterMessage('User registration successful, redirecting to login page...');
-      /* console.log('Registration successful'); */
-      //wait for 2 seconds
         await new Promise(resolve => setTimeout(resolve, 2000));
       navigate('/login');
     } catch (error) {

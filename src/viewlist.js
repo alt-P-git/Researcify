@@ -4,10 +4,7 @@ import axios from "axios";
 import { view } from "./view.js";
 import SearchFilter from './searchfilter.js';
 
-// ... rest of your code ...
-
 function ResearchPapers() {
-  // ... rest of your code ...
 
   return (
     <div className="researchPapers">
@@ -24,7 +21,6 @@ function ResearchPapers() {
         setSortOrder={setSortOrder}
         handleSearch={handleSearch}
       />
-      {/* ... rest of your code ... */}
     </div>
   );
 }

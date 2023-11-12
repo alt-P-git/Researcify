@@ -14,7 +14,6 @@ function Dashboard() {
   const [mode, setMode] = useState("researchPaper");
   const [sortBy, setSortBy] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  //const [rawList, setRawList] = useState([]);
   const [subject, setSubject] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("asc");
 

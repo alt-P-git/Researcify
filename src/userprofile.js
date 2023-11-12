@@ -19,9 +19,9 @@ function UserProfile() {
           navigate('/');
         } else {
           const data = await response.json();
-          const userdata = data[0]; // Get the user data from the response
-          setData(userdata); // Set data to userdata
-          setUpdatedData(userdata); // Set updatedData to userdata
+          const userdata = data[0];
+          setData(userdata);
+          setUpdatedData(userdata);
         }
       } catch (error) {
         console.error('An error occurred:', error);

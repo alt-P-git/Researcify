@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { view } from "./view.js";
-import "./ResearchPapers.css"; // Import the CSS file
+import "./ResearchPapers.css";
 
 function Publisher_Journals() {
   const [search, setSearch] = useState("");
@@ -89,7 +89,7 @@ function Publisher_Journals() {
               <p>{journal.journal_title}</p>
               <p>Published on: {dateString}</p>
               <p>Views: {journal.view_count}</p>
-              <button className="view-btn" onClick={() => view(journal.journal_id,  "journal", displayErrorMessage, setErrorMessage)}>View</button>
+              <button className="view-btn" onClick={() => view(journal.journal_id,  "journal", displayErrorMessage, setErrorMessage, navigate)}>View</button>
               <button className="delete-btn" onClick={() => deleteFile(journal.journal_id)}>Delete</button>
             </div>
           );

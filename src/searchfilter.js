@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./SearchFilter.css"; // Import the CSS file
+import "./SearchFilter.css";
 import axios from "axios";
 
 function SearchFilter({
