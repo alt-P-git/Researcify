@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { view } from "./view.js";
+import { handleLogout } from "./handleLogout.js";
 import SearchFilter from './searchfilter.js';
 import "./ResearchPapers.css";
 
@@ -43,6 +44,9 @@ function ResearchPapers({
           setRawList(response.data);
         }
       } catch (error) {
+        if (error.response.status === 401) {
+          handleLogout(navigate);
+        }
         console.error("An error occurred:", error);
       }
     };
@@ -86,7 +90,7 @@ function ResearchPapers({
               <div key={journal.journal_id} className="journal-container">
                 <p>{journal.journal_name} | {journal.journal_title}</p>
                 <p>Published on: {dateString} | Views: {journal.view_count}</p>
-                <button onClick={() => view( journal.journal_id, "journal", displayErrorMessage, setErrorMessage )}>View</button>
+                <button onClick={() => view( journal.journal_id, "journal", displayErrorMessage, setErrorMessage, navigate )}>View</button>
               </div>
             );
           })}
@@ -106,7 +110,7 @@ function ResearchPapers({
                 {mode === "myResearchPaper" && (
                   <p>Peer review status: {paper.peer_review}</p>
                 )}
-                <button className="view-btn" onClick={() => view( paper.id, "researchpaper",displayErrorMessage, setErrorMessage)}>View</button>
+                <button className="view-btn" onClick={() => view( paper.id, "researchpaper",displayErrorMessage, setErrorMessage, navigate)}>View</button>
                 {mode === "myResearchPaper" && (
                   <button className="delete-btn" onClick={() => deleteFile(paper.id)}>Delete</button>
                 )}

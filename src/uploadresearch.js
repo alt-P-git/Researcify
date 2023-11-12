@@ -30,14 +30,19 @@ function UploadResearch() {
     formData.append("subject", uploadSubject);
     formData.append("description", description);
 
-    axios
-      .post("/uploadresearch", formData)
+    axios.post("/uploadresearch", formData)
       .then((res) => {
         setError("File uploaded");
       })
       .catch((err) => {
+        if (err.response.status === 401) {
+          handleLogout(navigate);
+        }
         console.error(err);
         setError("Error in uploading file");
+        setTimeout(() => {
+          setError("");
+        }, 2000);
       });
   };
 
@@ -51,6 +56,9 @@ function UploadResearch() {
       })
       .catch((error) => {
         console.error("Error fetching subjects:", error);
+        setTimeout(() => {
+          setError("");
+        }, 2000);
       });
   }, []);
 

@@ -4,6 +4,7 @@
   }
   
   .uploadresearch {
+    padding: 10px;
     padding-left: 20px;
     background-color: transparent;
     border-radius: 10px;
@@ -27,6 +28,7 @@
   .uploadresearch textarea,
   .uploadresearch select {
     padding: 10px;
+    margin-left: 10px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;

@@ -12,8 +12,7 @@ function ReviewPaperlist() {
   const [subject, setSubject] = useState("ALL");
   const [sortBy, setSortBy] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
-  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false); // State to toggle advanced search
-
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -141,7 +140,8 @@ function ReviewPaperlist() {
                     paper.id,
                     "researchpaper",
                     errorMessage,
-                    setErrorMessage
+                    setErrorMessage,
+                    navigate
                   )}>View</button>
               <button
                 className="accept-button"

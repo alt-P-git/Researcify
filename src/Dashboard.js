@@ -29,7 +29,7 @@ function Dashboard() {
           method: 'GET',
         });
         if (response.status === 401) {
-          navigate('/');
+          handleLogout(navigate);
         } else {
           const data = await response.json();
           setData(data);

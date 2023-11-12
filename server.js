@@ -43,13 +43,7 @@ var con = mysql.createConnection({
 });
 
 //for authorization
-function isAuthenticated(req, res, next) {
-  if (req.session) {
-    return next();
-  } else {
-    return res.status(401).send("Unauthorized");
-  }
-}
+
 function isAuthenticatedUser(req, res, next) {
   if (req.session && req.session.user) {
     return next();
@@ -78,7 +72,13 @@ function isAuthenticatedPublisher(req, res, next) {
     return res.status(401).send("Unauthorized");
   }
 }
-
+function isAuthenticated(req, res, next) {
+  if (req.session && (req.session.user || req.session.admin || req.session.peer || req.session.publisher)) {
+    return next();
+  } else {
+    return res.status(401).send("Unauthorized");
+  }
+}
 con.connect(function (err) {
   if (err) {
     console.log(err);
@@ -296,8 +296,8 @@ app.get("/subjects", function (req, res) {
 app.post("/researchPaperList", isAuthenticated, function (req, res) {
   var search = req.body.search;
   var mode = req.body.mode;
-
-    const id = req.session.user.id;
+  
+  const id = req.session.user.id;
   
   const subject = req.body.subject;
 
