@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { handleLogout } from './handleLogout.js';
+import Navbar from './navbar.js';
 
 function UserProfile() {
   const [data, setData] = useState({});
@@ -51,7 +52,9 @@ function UserProfile() {
   };
 
   return (
-    <div className="userprofile">
+    <div className="userprofilepage">
+      <Navbar />
+      <div className="userprofile">
       {editMode ? (
         <div>
           <input type="text" name="firstname" value={updatedData.firstname} onChange={handleInputChange} />
@@ -68,6 +71,8 @@ function UserProfile() {
           <button onClick={() => setEditMode(true)}>Edit</button>
         </div>
       )}
+      </div>
+      
     </div>
   );
 }

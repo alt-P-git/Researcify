@@ -12,14 +12,8 @@ function UploadResearch() {
   const [uploadSubject, setUploadSubject] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
-  const [data, setData] = useState({});
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [mode, setMode] = useState("myResearchPaper");
-  const [sortBy, setSortBy] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [subject, setSubject] = useState("ALL");
-  const [sortOrder, setSortOrder] = useState("asc");
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -39,13 +33,13 @@ function UploadResearch() {
           handleLogout(navigate);
         }
         console.error(err);
-        setError("Error in uploading file");
+        //display the error message sent by server
+        setError(err.response.data);
         setTimeout(() => {
           setError("");
         }, 2000);
       });
   };
-
   const [subjects, setSubjects] = useState([]);
 
   useEffect(() => {
@@ -74,9 +68,14 @@ function UploadResearch() {
     navigate('/uploadresearch');
   };
 
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <div>
       <Navbar
+        handleDashboardClick = {handleDashboardClick}
         handleuploadpage={handleuploadpage}
         handleProfileClick={handleProfileClick}
         handleLogout={() => handleLogout(navigate)}

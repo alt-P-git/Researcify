@@ -40,21 +40,9 @@ function Dashboard() {
     fetchData();
   }, []);
 
-  const handleProfileClick = () => {
-    navigate('/userprofile');
-  };
-
-  const handleuploadpage = () => {
-    navigate('/uploadresearch');
-  };
-
   return (
     <div className="dashboard">
-      <Navbar
-        handleuploadpage={handleuploadpage}
-        handleProfileClick={handleProfileClick}
-        handleLogout={() => handleLogout(navigate)}
-      />
+      <Navbar />
       <div >
       <SearchFilter
         mode={mode}
