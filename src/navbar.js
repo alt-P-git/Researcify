@@ -1,21 +1,22 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { Link, useNavigate } from 'react-router-dom';
 import './navbar.css';
+import { handleLogout } from './handleLogout';
+const Navbar = () => {
+  const navigate = useNavigate();
 
-const Navbar = ({ handleProfileClick, handleLogout, handleuploadpage }) => {
+  const handleLogoutClick = () => {
+    handleLogout(navigate);
+  };
+
   return (
     <nav className="navbar">
-      <button onClick={handleProfileClick}>Profile</button>
-      <button onClick={handleuploadpage}>Upload</button>
-      <button onClick={handleLogout}>Logout</button>
+      <Link to="/dashboard">Dashboard</Link>
+      <Link to="/userprofile">Profile</Link>
+      <Link to="/uploadresearch">Upload</Link>
+      <button onClick={handleLogoutClick}>Logout</button>
     </nav>
   );
-};
-
-Navbar.propTypes = {
-  handleProfileClick: PropTypes.func.isRequired,
-  handleLogout: PropTypes.func.isRequired,
 };
 
 export default Navbar;
