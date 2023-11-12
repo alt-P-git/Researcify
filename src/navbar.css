@@ -1,18 +1,19 @@
 body{
     margin: 0;
     font-family: 'Arial', sans-serif;
+    width: 100%;
 }
 
 .navbar {
     top: 0;
-    width: 100%;
     background-color:rgb(212, 253, 253);
-    padding: 15px;
+    padding: 10px;
     display: flex;
     justify-content: right;
     align-items: center;
     color: rgb(0, 0, 0);
     z-index: 1000;
+    margin-bottom: 15px;
 }
 
 .navbar a {
@@ -22,14 +23,11 @@ body{
 }
 
 .navbar button {
+  font-size: 15px;
   color: rgb(0, 0, 0);
   background-color: transparent;
   border: none;
   padding: 5px;
   cursor: pointer;
-  margin-right: 10px;
-}
-
-.navbar button:hover {
-  background-color: #c9302c;
+  margin: (0, 10px);
 }

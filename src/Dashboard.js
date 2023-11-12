@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SearchFilter from "./searchfilter.js";
 import ResearchPapers from "./researchpapers.js";
-import UploadResearch from './uploadresearch';
 import Navbar from './navbar';
 import { handleLogout } from './handleLogout.js';
 import './Dashboard.css';
@@ -15,7 +14,7 @@ function Dashboard() {
   const [mode, setMode] = useState("researchPaper");
   const [sortBy, setSortBy] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [rawList, setRawList] = useState([]);
+  //const [rawList, setRawList] = useState([]);
   const [subject, setSubject] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("asc");
 
@@ -46,9 +45,14 @@ function Dashboard() {
     navigate('/userprofile');
   };
 
+  const handleuploadpage = () => {
+    navigate('/uploadresearch');
+  };
+
   return (
     <div className="dashboard">
       <Navbar
+        handleuploadpage={handleuploadpage}
         handleProfileClick={handleProfileClick}
         handleLogout={() => handleLogout(navigate)}
       />
@@ -76,8 +80,6 @@ function Dashboard() {
         setSubject={setSubject}
         setmode={setMode}
       />
-        {/* <ResearchPapers /> */}
-        {/* <UploadResearch /> */}
       </div>
     </div>
   );

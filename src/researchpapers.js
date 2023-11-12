@@ -17,13 +17,8 @@ function ResearchPapers({
   setSubject,
   setMode,
 }) {
-  //const [search, setSearch] = useState("");
-  //const [mode, setMode] = useState("researchPaper");
-  //const [sortBy, setSortBy] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [rawList, setRawList] = useState([]);
-  //const [subject, setSubject] = useState("ALL");
-  //const [sortOrder, setSortOrder] = useState("asc");
   const navigate = useNavigate();
 
   const displayErrorMessage = (message) => {
@@ -62,12 +57,6 @@ function ResearchPapers({
     }
   });
 
-  /* const handleSearch = (event) => {
-    if (event.key === "Enter") {
-      setSearch(event.target.value);
-    }
-  }; */
-
   const handleModeChange = (event) => {
     setMode(event.target.value);
   };
@@ -104,7 +93,7 @@ function ResearchPapers({
         </div>
       ) : (
         <div>
-          <h1 className="research-heading">Research Papers</h1>
+          <h1 className="research-heading">{mode === "myResearchPaper" ? "My Research Papers" : "Research Papers"}</h1>
           <p>{errorMessage}</p>
           {sortedList.map((paper) => {
             let date = new Date(paper.pub_date);

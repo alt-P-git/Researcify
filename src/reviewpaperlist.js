@@ -85,13 +85,18 @@ function ReviewPaperlist() {
   return (
     <div className="researchPapers">
       <div className="scrollable-container">
-        <div className="search-bar">
+        <div className="alwaysvisible">
+          <div className="search-bar">
           <input
             type="text"
             onKeyDown={handleSearch}
             placeholder="Search..."
             className="search-input"
           />
+          <button onClick={() => setShowAdvancedSearch(!showAdvancedSearch)} className="advanced-search-button" >
+          {showAdvancedSearch ? "Hide Advanced Search" : "Show Advanced Search"}
+        </button>
+        </div>
           </div>
           <div className={`advanced-search ${showAdvancedSearch ? "visible" : ""}`}>
           {showAdvancedSearch && (
@@ -122,9 +127,6 @@ function ReviewPaperlist() {
             </>
           )}
         </div>
-        <button onClick={() => setShowAdvancedSearch(!showAdvancedSearch)} className="advanced-search-button" >
-          {showAdvancedSearch ? "Hide Advanced Search" : "Show Advanced Search"}
-        </button>
         <div>
           <h1 className="research-heading">Research Papers</h1>
           <p className="error-message">{errorMessage}</p>

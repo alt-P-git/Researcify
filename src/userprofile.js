@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { handleLogout } from './handleLogout.js';
 
-function Dashboard() {
+function UserProfile() {
   const [data, setData] = useState({});
   const [editMode, setEditMode] = useState(false);
   const [updatedData, setUpdatedData] = useState({});
@@ -72,4 +72,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default UserProfile;
