@@ -20,7 +20,7 @@ function SearchFilter({
     axios
       .get("/subjects")
       .then((response) => {
-        setSubjects(response.data || []); // Ensure subjects is set to an array
+        setSubjects(response.data || []);
       })
       .catch((error) => {
         console.error("Error fetching subjects:", error);
@@ -61,21 +61,24 @@ function SearchFilter({
               <option value="researchPaper">Research Papers</option>
               <option value="journal">Journals</option>
             </select>
-            <select
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            >
-              <option value="">Select Subject</option>
-              {subjects.map((subj, index) => (
-                <option key={index} value={subj.subjects}>
-                  {subj.subjects}
-                </option>
-              ))}
-            </select>
+            {mode !== "journal" && (
+              <select
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              >
+                <option value="">Select Subject</option>
+                {subjects.map((subj, index) => (
+                  <option key={index} value={subj.subjects}>
+                    {subj.subjects}
+                  </option>
+                ))}
+              </select>
+            )}
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="">Sort by</option>
-              <option value="title">Title</option>
+              {mode !== "journal" && <option value="title">Title</option>}
               <option value="pub_date">Date_Time</option>
+              <option value="view_count">Views</option>
             </select>
             <select
               value={sortOrder}

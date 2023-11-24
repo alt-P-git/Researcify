@@ -103,12 +103,11 @@ con.connect(function (err) {
   });
 
   app.post("/register", (req, res) => {
-    var firstname = req.body.firstname;
-    var lastname = req.body.lastname;
+    var firstname = req.body.firstName;
+    var lastname = req.body.lastName;
     var email = req.body.email;
     var password = req.body.password;
-
-    // checking user already registered or no
+    console.log(firstname, lastname, email, password)
     con.query(
       `SELECT * FROM users WHERE BINARY email = '${email}'`,
       function (err, result) {
@@ -118,7 +117,6 @@ con.connect(function (err) {
         if (Object.keys(result).length > 0) {
           res.status(401).send("Email already registered");
         } else {
-          //creating user page in userPage function
           function userPage() {
             //creating session
             req.session.user = {
@@ -128,13 +126,11 @@ con.connect(function (err) {
               password: password,
             };
           }
-          // inserting new user data
           var sql = `INSERT INTO users (firstname, lastname, email, password) VALUES ('${firstname}', '${lastname}', '${email}', '${password}')`;
           con.query(sql, function (err, result) {
             if (err) {
               console.log(err);
             } else {
-              // using userPage function for creating user page
               userPage();
               res.status(200).send("Successfully registered");
             }
