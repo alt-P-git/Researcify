@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { handleLogout } from './handleLogout.js';
 import Navbar from './navbar.js';
+import './userprofile.css';
 
 function UserProfile() {
   const [data, setData] = useState({});
@@ -54,25 +55,24 @@ function UserProfile() {
   return (
     <div className="userprofilepage">
       <Navbar />
-      <div className="userprofile">
-      {editMode ? (
-        <div>
-          <input type="text" name="firstname" value={updatedData.firstname} onChange={handleInputChange} />
-          <input type="text" name="lastname" value={updatedData.lastname} onChange={handleInputChange} />
-          <input type="email" name="email" value={updatedData.email} onChange={handleInputChange} />
-          <input type="password" name="password" value={updatedData.password} onChange={handleInputChange} />
-          <button onClick={handleEditSubmit}>Submit</button>
-        </div>
-      ) : (
-        <div>
-          <p>Firstname: {data.firstname}</p>
-          <p>Lastname: {data.lastname}</p>
-          <p>Emailid: {data.email}</p>
-          <button onClick={() => setEditMode(true)}>Edit</button>
-        </div>
-      )}
+      <div className="userprofile-container">
+        {editMode ? (
+          <div className="edit-mode">
+            <p>Firstname: <input type="text" name="firstname" value={updatedData.firstname} onChange={handleInputChange} /></p>
+            <p>Lastname: <input type="text" name="lastname" value={updatedData.lastname} onChange={handleInputChange} /></p>
+            <p>Email id: <input type="email" name="email" value={updatedData.email} onChange={handleInputChange} /></p>
+            <p>Password <input type="password" name="password" value={updatedData.password} onChange={handleInputChange} /></p>
+            <button id='submit_button' onClick={handleEditSubmit}>Submit</button>
+          </div>
+        ) : (
+          <div className="view-mode">
+            <p>Firstname: {data.firstname}</p>
+            <p>Lastname: {data.lastname}</p>
+            <p>Email id: {data.email}</p>
+            <button id='edit_button' onClick={() => setEditMode(true)}>Edit</button>
+          </div>
+        )}
       </div>
-      
     </div>
   );
 }

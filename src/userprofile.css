@@ -1,0 +1,46 @@
+.userprofile-container {
+    /* bring it to centre */
+
+    margin: auto;
+    width: 40%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+  
+.edit-mode input,
+.edit-mode button {
+    margin-bottom: 10px;
+}
+  
+.view-mode p {
+    margin-bottom: 10px;
+}
+
+#edit_button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#submit_button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
