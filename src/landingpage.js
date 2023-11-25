@@ -54,7 +54,7 @@ function LandingPage() {
             Access to <br />
             1000+ research papers <br />
             for free <br />
-            <p><Link to="/login">Login</Link></p>
+            <p><button className='landing-login-btn' onClick={() => navigate("/login")}>Login</button></p>
           </div>
         </div>
         <div className="landing-right-content">

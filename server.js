@@ -20,14 +20,13 @@ app.use(function (req, res, next) {
   next();
 });
 
-//session middleware
 app.use(
   sessions({
     secret: "thisismysecrctekey",
     saveUninitialized: true,
     cookie: {
-      maxAge: 1000 * 60 * 60, // 1 hour
-      name: "user_cookie", //cookie name
+      maxAge: 1000 * 60 * 60,
+      name: "user_cookie",
     },
     resave: false,
   })
@@ -37,9 +36,9 @@ app.use(cookieParser());
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "root", // my username
-  password: "", // my password
-  database: "loginsystem",
+  user: "root",
+  password: "", 
+  database: "researcify",
 });
 
 //for authorization
