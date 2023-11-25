@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { view } from "./view.js";
 import "./ResearchPapers.css";
+import "./publisherjournals.css";
 
 function Publisher_Journals() {
   const [search, setSearch] = useState("");
@@ -66,17 +67,18 @@ function Publisher_Journals() {
   };
 
   return (
-    <div className="researchPapers">
+    <div className="researchPapers pubjournals">
       <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
         <option value="">Sort by</option>
         <option value="title">Title</option>
         <option value="pub_date">Date_Time</option>
+        <option value="view_count">Views</option>
       </select>
       <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
         <option value="asc">Ascending</option>
         <option value="desc">Descending</option>
       </select>
-      <input type="text" onKeyDown={handleSearch} placeholder="Search..." />
+      <input className="search-input" type="text" onKeyDown={handleSearch} placeholder="Search..." />
       <div className="scrollable-container">
         <h1 className="journal-heading">Journals</h1>
         <p>{errorMessage}</p>

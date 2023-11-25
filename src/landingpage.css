@@ -1,0 +1,220 @@
+
+.landing-main-wrapper > div:not(:last-child) {
+    flex-grow: 1;
+  }
+  
+  .landing-container {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    background-color: #FFFFFF;
+  }
+  
+  .landing-centered-content {
+    position: absolute;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    background: #CCC9C9;
+    border: 1px solid;
+    border-color: #000000;
+    padding: 20px;
+    z-index: 1;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .landing-logo {
+    width: 300px;
+    font-family: 'Lucida Handwriting', 'Lucida Console', monospace;
+    margin-right: 30px;
+  }
+  
+  .landing-centered-content div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .landing-centered-logo {
+    width: 30px;
+    height: auto;
+  }
+  
+  .landing-left-content, .landing-right-content {
+    flex: 0.5;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .landing-left-content .landing-logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+
+  
+  
+  .landing-register-btn {
+    position: absolute;
+    display: flex;
+    top: 4%;
+    left: 78%;
+    height: auto;
+    width: 16vw;
+    transform: translateX(-50%);
+    padding: 15px 20px;
+    justify-content: center;
+    font-size: 18px;
+    background-color: #99B0FF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    z-index: 2;
+  }
+  
+  .landing-register-btn:hover {
+    background-color: #8CB4D5;
+  }
+  
+  .landing-left-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .landing-text {
+    font-size: 3vw !important;
+    position: relative;
+    top: 11%;
+    font-weight: bold;
+    text-align: left;
+    color: #000;
+    margin-bottom: 0px;
+    margin-left: 20px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    letter-spacing: 0.5px;
+    font-style: italic;
+  }
+  
+  .landing-text:hover {
+    transform: none;
+  }
+  
+  .landing-logo {
+    display: flex;
+    font-size: 3vw;
+    align-items: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+    font-style: italic;
+  }
+  
+  .landing-logo-text {
+    font-size: 24px;
+    z-index: 0;
+    text-align: center;
+  }
+  
+  .landing-text {
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  .landing-right-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .landing-right-content img {
+    width: 100%;
+    display: block;
+    margin-left: 20%;
+  }
+  
+  .landing-subjects-container {
+    background-color: #E5E5E5;
+    padding: 40px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .landing-subjects-container h2 {
+    font-size: 26px;
+    border-bottom: 2px solid #B5B5B5;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+  }
+  
+  .landing-lists-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  
+  .landing-ul {
+    list-style-type: none;
+    padding: 10px;
+    margin: 0 10px;
+    flex-basis: calc(33.33% - 20px);
+    box-sizing: border-box;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+  }
+  
+  .landing-ul:hover {
+    background-color: #F0F0F0;
+  }
+  
+  .landing-ul li:hover {
+    color: #0075FF;
+  }
+  
+  @media (min-width: 768px) {
+    .landing-subjects-container {
+      flex-direction: row;
+    }
+  }
+  
+  .landing-footer {
+    margin-top: 10px;
+  }
+  
+  .landing-footer {
+    text-align: center;
+    padding: 20px 0;
+    position: absolute;
+    width: 100%;
+  }
+  
+  .landing-footer p {
+    line-height: 1.5;
+  }
+  
+  .landing-footer a:hover {
+    text-decoration: underline;
+  }
+  
+  .landing-footer a {
+    color: #0075FF;
+  }
+  
+  .landing-footer, .landing-footer a {
+    font-weight: 550;
+  }
+  
+  .landing-brand-name {
+    font-style: italic;
+  }  

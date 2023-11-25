@@ -7,14 +7,32 @@ body{
 .navbar {
     top: 0;
     background-color:rgb(212, 253, 253);
-    padding-top: 10px;
-    padding-bottom: 10px;
+    
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
     align-items: center;
     color: rgb(0, 0, 0);
     z-index: 1000;
     margin-bottom: 15px;
+    font-size: large;
+}
+
+.navbarleft {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: larger;
+  font-family: 'Lucida Handwriting', cursive;
+}
+
+.navbarlefttext {
+  margin: 5px;
+  text-align: center;
+}
+
+.logo {
+  margin-left: 15px;
+  width: 70px;
 }
 
 .navbar a {

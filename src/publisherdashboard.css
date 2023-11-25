@@ -1,0 +1,10 @@
+.publisher_dashboard {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.journalscontainer {
+    width: 50%;
+}

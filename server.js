@@ -292,9 +292,14 @@ app.get("/subjects", function (req, res) {
 app.post("/researchPaperList", isAuthenticated, function (req, res) {
   var search = req.body.search;
   var mode = req.body.mode;
-  
-  const id = req.session.user.id;
-  
+  var id = "";
+  if (req.session && req.session.user) {
+    id = req.session.user.id;
+  }
+  else if (req.session.admin && mode === "myResearchPaper") {
+    mode = "researchPaper";
+  }
+
   const subject = req.body.subject;
 
   if (mode === "myResearchPaper") {

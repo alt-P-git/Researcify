@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './uploadjournal.css';
 
 const UploadJournal = () => {
   const [title, setTitle] = useState("");
@@ -23,7 +24,7 @@ const UploadJournal = () => {
   };
 
   return (
-    <form onSubmit={submitForm}>
+    <form className='uploadjournalform' onSubmit={submitForm}>
       <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
       <input type="file" onChange={(e) => setFile(e.target.files[0])} />
       <button type="submit">Upload</button>

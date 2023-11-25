@@ -1,0 +1,52 @@
+/* adminDashboard.css */
+
+.admin-dashboard {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .add-forms {
+    display: flex;
+    justify-content: space-between;
+    width: 45%;
+  }
+  
+  .add-user-form,
+  .add-publisher-form {
+    width: 48%;
+  }
+  
+  .add-user-form,
+  .add-publisher-form form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .add-user-form input,
+  .add-publisher-form input {
+    margin-bottom: 10px;
+    padding: 8px;
+  }
+  
+  .research-paper-list {
+    width: 45%;
+  }
+  
+  .user-info {
+    width: 45%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .user-info button {
+    margin-top: 10px;
+  }
+  
+  .error-message {
+    color: red;
+    margin-bottom: 10px;
+  }

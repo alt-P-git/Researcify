@@ -1,0 +1,56 @@
+.uploadjournalform {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: fit-content;
+    margin: auto;
+}
+  
+.uploadjournalform label {
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+  
+.uploadjournalform input,
+.uploadjournalform select {
+    padding: 10px;
+    margin-left: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 50vh;
+    max-width: 30vw;
+}
+  
+.form-description-container {
+    display: flex;
+    flex-direction: row;
+}
+  
+.uploadjournalform textarea {
+    padding: 10px;
+    margin-left: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 50vh;
+    max-width: 30vw;
+}
+  
+.uploadjournalform button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100px;
+    margin: auto;
+}
+  
+.uploadjournalform button:hover {
+    opacity: 0.9;
+}
