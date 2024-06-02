@@ -1,70 +1,30 @@
-# Getting Started with Create React App
+# Researcify
+A website to view, download and upload research papers.
+It can be used by a orginazition to view and share research papers for learning purposes.
+It's working is different than the actual research paper webbsites.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Roles
+There are three roles
+- User
+- Peer
+- Admin
 
-## Available Scripts
+**User:** Can upload research papers and get it verified by peers of particular domain and view/download verified research papers.
+**Peer:** Can view/download the unverified research papers of particular domain and accept or reject it.
+**Admin:** Can view/download the research papers and create/delete the accounts of user, peer or admin.
 
-In the project directory, you can run:
+## Working
+**Admin:** First the admin has to login using credentials.
+Admin can create/delete the accounts of the peers and users.
+Admin can also view the research papers.
 
-### `npm start`
+**User:** The users can login using the credentials.
+User can view/download the research papers using the search functionality which include search using keywords/ids, filter using domain and sort by views or date.
+User can upload researh paper by selecting the domain and entering short info of the research paper, it has to be verified by peer to become visible to other users.
+User can delete the uploaded research papers both verified and un verified.
+User can edit his/her profile.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Peer:** Peer has to login using the credentials.
+The main screen would show the unverified research papers of his/her domain.
+Peer can view/download the research paper and then accept/reject it.
+Once the research paper is verified, it becomes public.
